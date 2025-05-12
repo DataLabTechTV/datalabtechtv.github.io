@@ -9,7 +9,7 @@ dev:
 setup:
 	git submodule update --init --recursive
 
-deploy: build
+deploy:
 	git subtree push --prefix public/ origin gh-pages
 
 clean:
