@@ -1,4 +1,6 @@
-all:
+all: build
+
+build:
 	hugo
 
 dev:
@@ -7,7 +9,7 @@ dev:
 setup:
 	git submodule update --init --recursive
 
-deploy:
+deploy: build
 	(cd .. && git subtree push --prefix public/ origin gh-pages)
 
 clean:
