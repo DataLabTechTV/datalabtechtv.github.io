@@ -8,7 +8,7 @@ setup:
 	git submodule update --init --recursive
 
 deploy:
-	(cd .. && git subtree push --prefix src/public/ origin gh-pages)
+	(cd .. && git subtree push --prefix public/ origin gh-pages)
 
 clean:
 	find -name "*.sav" -delete -or -name "*.bak" -delete
