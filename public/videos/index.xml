@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Videos on Data Lab Tech</title>
+    <link>https://datalabtechtv.com/videos/</link>
+    <description>Recent content in Videos on Data Lab Tech</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© 2025 Data Lab Tech</copyright>
+    <lastBuildDate>Mon, 12 May 2025 17:52:22 +0100</lastBuildDate><atom:link href="https://datalabtechtv.com/videos/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>My Post</title>
+      <link>https://datalabtechtv.com/videos/postgresql-maximalism/</link>
+      <pubDate>Mon, 12 May 2025 17:52:22 +0100</pubDate>
+      
+      <guid>https://datalabtechtv.com/videos/postgresql-maximalism/</guid>
+      <description>Description # Once upon a time some content.</description>
+      
+    </item>
+    
+  </channel>
+</rss>
