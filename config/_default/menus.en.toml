@@ -15,61 +15,46 @@ name = "Blog"
 pageRef = "posts"
 weight = 10
 
-#[[main]]
-#  name = "Parent"
-#  weight = 20
+[[main]]
+name = "YouTube"
+pre = "youtube"
+url = "https://youtube.com/@DataLabTechTV"
+weight = 20
 
-#[[main]]
-#  name = "example sub-menu 1"
-#  parent = "Parent"
-#  pageRef = "posts"
-#  weight = 20
+[[main]]
+name = "Bluesky"
+pre = "bluesky"
+url = "https://bsky.app/profile/datalabtechtv.com"
+weight = 21
+
+[[main]]
+name = "Tags"
+pageRef = "tags"
+weight = 30
 
 [[main]]
 name = "Data Science"
 parent = "Categories"
 pageRef = "categories/data-science"
-weight = 20
+weight = 40
 
 [[main]]
 name = "Data Engineering"
 parent = "Categories"
 pageRef = "categories/data-engineering"
-weight = 21
+weight = 41
 
 [[main]]
 name = "MLOps"
 parent = "Categories"
 pageRef = "categories/mlops"
-weight = 22
+weight = 42
 
 [[main]]
 name = "DevOps"
 parent = "Categories"
 pageRef = "categories/devops"
-weight = 23
-
-# [[subnavigation]]
-#  name = "An interesting topic"
-#  pageRef = "tags/interesting-topic"
-#  weight = 10
-
-# [[subnavigation]]
-#  name = "My Awesome Category"
-#  pre = "github"
-#  pageRef = "categories/awesome"
-#  weight = 20
-
-# [[main]]
-#  name = "Categories"
-#  pageRef = "categories"
-#  weight = 30
-
-[[main]]
-name = "Tags"
-pageRef = "tags"
-weight = 40
-
+weight = 43
 
 # -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before
