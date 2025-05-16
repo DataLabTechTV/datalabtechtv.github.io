@@ -149,11 +149,11 @@ cardViewScreenWidth = false
 # enableTrackEvent = true
 
 [buymeacoffee]
-# identifier = ""
-# globalWidget = true
-# globalWidgetMessage = "Hello"
-# globalWidgetColor = "#FFDD00"
-# globalWidgetPosition = "Right"
+identifier = "DataLabTechTV"
+globalWidget = true
+globalWidgetMessage = "If you like all things data, buy me a coffee!"
+globalWidgetColor = "#FFDD00"
+globalWidgetPosition = "Right"
 
 [verification]
 # google = ""
