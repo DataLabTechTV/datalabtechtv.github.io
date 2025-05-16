@@ -11,9 +11,9 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
- name = "Blog"
- pageRef = "posts"
- weight = 10
+name = "Blog"
+pageRef = "posts"
+weight = 10
 
 #[[main]]
 #  name = "Parent"
@@ -25,32 +25,50 @@
 #  pageRef = "posts"
 #  weight = 20
 
-#[[main]]
-#  name = "example sub-menu 2"
-#  parent = "Parent"
-#  pageRef = "posts"
-#  weight = 20
+[[main]]
+name = "Data Science"
+parent = "Categories"
+pageRef = "categories/data-science"
+weight = 20
 
-#[[subnavigation]]
+[[main]]
+name = "Data Engineering"
+parent = "Categories"
+pageRef = "categories/data-engineering"
+weight = 21
+
+[[main]]
+name = "MLOps"
+parent = "Categories"
+pageRef = "categories/mlops"
+weight = 22
+
+[[main]]
+name = "DevOps"
+parent = "Categories"
+pageRef = "categories/devops"
+weight = 23
+
+# [[subnavigation]]
 #  name = "An interesting topic"
 #  pageRef = "tags/interesting-topic"
 #  weight = 10
 
-#[[subnavigation]]
+# [[subnavigation]]
 #  name = "My Awesome Category"
 #  pre = "github"
 #  pageRef = "categories/awesome"
 #  weight = 20
 
-#[[main]]
+# [[main]]
 #  name = "Categories"
 #  pageRef = "categories"
-#  weight = 20
-
-#[[main]]
-#  name = "Tags"
-#  pageRef = "tags"
 #  weight = 30
+
+[[main]]
+name = "Tags"
+pageRef = "tags"
+weight = 40
 
 
 # -- Footer Menu --

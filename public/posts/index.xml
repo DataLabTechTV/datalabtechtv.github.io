@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Data Lab Tech TV</title>
-    <link>https://datalabtechtv.com/</link>
+    <link>https://datalabtechtv.com/posts/</link>
     <description>Recent content on Data Lab Tech TV</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© 2025 Data Lab Tech TV</copyright>
-    <lastBuildDate>Mon, 12 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://datalabtechtv.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 12 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://datalabtechtv.com/posts/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>My Post</title>

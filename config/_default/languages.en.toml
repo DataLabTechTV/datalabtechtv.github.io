@@ -2,29 +2,30 @@ disabled = false
 languageCode = "en"
 languageName = "English"
 weight = 1
-title = "Data Lab Tech"
+title = "Data Lab Tech TV"
 
 [params]
 displayName = "EN"
 isoCode = "en"
 rtl = false
 dateFormat = "2 January 2006"
-# logo = "img/logo.png"
+logo = "img/logo.png"
 # secondaryLogo = "img/secondary-logo.png"
 # description = "My awesome website"
 # copyright = "Copy, _right?_ :thinking_face:"
 
 [params.author]
-name = "Data Lab Tech"
+name = "Data Lab Tech TV"
 image = "img/avatar.png"
 imageQuality = 96
 headline = "Your Source For All Things Data"
-bio = "PhD in Computer Science"
+bio = "https://youtube.com/@DataLabTechTV"
 links = [
-  { email = "mailto:mail@datalabtechtv.com" },
+  { youtube = "https://youtube.com/@DataLabTechTV" },
   { bluesky = "https://bsky.app/profile/datalabtechtv.bsky.social" },
   { github = "https://github.com/DataLabTechTV" },
-  { youtube = "https://youtube.com/@DataLabTechTV" },
+  { discord = "https://discord.gg/V5c5htsF" },
+  { email = "mailto:mail@datalabtechtv.com" },
 ]
 
 # [params.author]
