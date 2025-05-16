@@ -3,20 +3,19 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+    <loc>https://datalabtechtv.com/posts/</loc>
+    <lastmod>2025-05-12T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  <url>
     <loc>https://datalabtechtv.com/</loc>
-    <lastmod>2025-05-12T17:52:22+01:00</lastmod>
+    <lastmod>2025-05-12T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://datalabtechtv.com/videos/postgresql-maximalism/</loc>
-    <lastmod>2025-05-12T17:52:22+01:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://datalabtechtv.com/videos/</loc>
-    <lastmod>2025-05-12T17:52:22+01:00</lastmod>
+    <loc>https://datalabtechtv.com/posts/00-my-post/</loc>
+    <lastmod>2025-05-12T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Data Lab Tech</title>
+    <title>Tags on Data Lab Tech TV</title>
     <link>https://datalabtechtv.com/tags/</link>
-    <description>Recent content in Tags on Data Lab Tech</description>
+    <description>Recent content in Tags on Data Lab Tech TV</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>© 2025 Data Lab Tech</copyright>
+    <copyright>© 2025 Data Lab Tech TV</copyright>
     <atom:link href="https://datalabtechtv.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
   </channel>
