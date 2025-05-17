@@ -7,7 +7,37 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>© 2025 Data Lab Tech TV</copyright>
-    <atom:link href="https://datalabtechtv.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 May 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://datalabtechtv.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>chatgpt</title>
+      <link>https://datalabtechtv.com/tags/chatgpt/</link>
+      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://datalabtechtv.com/tags/chatgpt/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>generated</title>
+      <link>https://datalabtechtv.com/tags/generated/</link>
+      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://datalabtechtv.com/tags/generated/</guid>
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>lorem-ipsum</title>
+      <link>https://datalabtechtv.com/tags/lorem-ipsum/</link>
+      <pubDate>Sat, 17 May 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://datalabtechtv.com/tags/lorem-ipsum/</guid>
+      <description></description>
+      
+    </item>
     
   </channel>
 </rss>
