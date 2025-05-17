@@ -80,6 +80,7 @@ showTableOfContents = true
 showTaxonomies = true
 showAuthorsBadges = false
 showWordCount = true
+sharingLinks = ["linkedin", "bluesky", "mastodon", "reddit", "facebook", "email", "whatsapp", "telegram"]
 # sharingLinks = [ "linkedin", "twitter", "bluesky", "mastodon", "reddit", "pinterest", "facebook", "email", "whatsapp", "telegram"]
 showZenMode = false
 
