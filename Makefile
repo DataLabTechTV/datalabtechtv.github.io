@@ -4,7 +4,7 @@ build:
 	hugo
 
 dev:
-	hugo server -D -b localhost:1313
+	hugo server -D -b http://localhost:1313
 
 setup:
 	git submodule update --init --recursive
