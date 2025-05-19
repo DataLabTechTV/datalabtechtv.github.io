@@ -95,6 +95,12 @@ Unedited research notes for my "PostgreSQL Maximalism" series. This is likely mo
 	- Similar to `pgai`, supporting RAG and semantic search, but relies directly on `pgvector`.
 	- Supports Hugging Face's Sentence-Transformers as well as OpenAI's embeddings.
 	- Supports direct interaction with LLMs.
+- [pgrag](https://github.com/neondatabase-labs/pgrag)
+	- Rust-based, experimental solution by Neon.
+	- Complete pipeline support from text extraction (PDF, DOCX) to chat completion based on ChatGPT's API.
+	- Support for [bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) or OpenAI's embeddings.
+	- Distance computation and ranking based on `pgvector`.
+	- Reranking based on [jina-reranker-v1-tiny-en](https://huggingface.co/jinaai/jina-reranker-v1-tiny-en) also available.
 
 ### Full-Text Search
 
@@ -218,7 +224,7 @@ Extensions like the well-known `pgvector`, or its complement `pgvectorscale`, bo
 
 Regardless of whether AI operations belongs in the database, extensions to facilitate text embedding and LLM integration still exist, integrating with `pgvector`.
 
-AI extensions include `pgai` and `pg_vectorize`, both supporting direct LLM querying, text embedding, and RAG and similarity search. In both extensions, text embedding is made possible either based on Hugging Face models, by querying OpenAI's embedding API, or via Ollama's API, which also powers the direct access to LLMs and RAG features.
+AI extensions include `pgai` and `pg_vectorize`, both supporting direct LLM querying, text embedding, and RAG and similarity search. In both extensions, text embedding is made possible either based on Hugging Face models, by querying OpenAI's embedding API, or via Ollama's API, which also powers the direct access to LLMs and RAG features. There is also `pgrag`, a more recent, experimental extension focused on delivering a complete pipeline for RAG, being the only one that supports text extraction from PDF or DOCX files, as well as a specialized reranking model to help improve the outcome before generating the text completion.
 
 All this is made possible by accessing Python APIs under the hood, via PL/Python. While these features can be convenient at times, I tend to think that they do not belong in the database, but rather on its own Python codebase. The database should be exclusively concerned with storage and retrieval, so, unless there are performance reasons that justify integrating complex data processing features with the database, I believe this should be avoided. An example of this is `pgvector` and `pgvectorscale`, where indexing approaches were required to efficiently solve the vector distance computations — and indexing belongs in the database.
 
@@ -358,6 +364,7 @@ PGDG - PostgreSQL Global Development Group
 | 🔴  | [pg_vectorscale](https://github.com/timescale/pgvectorscale/)          | Timescale          | 2023    | Extends `pgvector` with the StreamingDiskANN index (inspired by Microsoft's DiskANN), and adds Statistical Binary Quantization for compression, and label-based filtered vector search for vector operations with added filtering over categories.                                                                                                                         |
 | 🟢  | [pgai](https://docs.timescale.com/ai/latest/)                          | Timescale          | 2024    | Relies on `pg_vectorscale` to provide semantic search, RAG via OpenAI, Ollama or Cohere, text chunking, computing text embeddings, or loading Hugging Face datasets.                                                                                                                                                                                                       |
 | 🔴  | [pg_vectorize](https://tembo.io/pg_vectorize/)                         | Tembo              | 2023    | Similar to `pgai`, but relies directly on `pgvector` to provide semantic search, and RAG via Hugging Face's Sentence-Transformers, OpenAI's embeddings or Ollama. It also supports direct interactions with LLMs.                                                                                                                                                          |
+| 🔴  | [pgrag](https://github.com/neondatabase-labs/pgrag)                    | Neon               | 2024    | Focused on providing a complete RAG pipeline, provides text extraction from PDF or DOCX, as well as support for reranking via [jinaai/jina-reranker-v1-tiny-en](https://huggingface.co/jinaai/jina-reranker-v1-tiny-en). Embeddings are either based on [BAAI/bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) or OpenAI, and it only supports ChatGPT for generation. |
 
 ### Search
 
