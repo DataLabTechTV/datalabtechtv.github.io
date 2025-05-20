@@ -11,7 +11,7 @@ tags: ["databases", "postgres", "extensions", "unedited", "video", "series", "re
 
 Unedited research notes for my "PostgreSQL Maximalism" series. This is likely more than enough information, if you're looking into extending Postgres for your storage and querying needs. For an easier-to-digest, follow-up version, check the video series. For your convenience, each extension category is properly annotated in the videos as chapters.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/DMeKi_QmWJE?si=UjD4pj3wIvh98E4j" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<!-- Embed Part 1 YouTube video here -->
 
 ## Research
 
