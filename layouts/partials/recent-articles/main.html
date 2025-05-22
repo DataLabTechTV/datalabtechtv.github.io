@@ -15,7 +15,8 @@
   {{ partial "recent-articles/list.html" . }}
 {{ end }}
 
-{{ if .Site.Params.homepage.showMoreLink | default false }}
+{{ if and (.Site.Params.homepage.showMoreLink | default false) (gt (len .Site.RegularPages) $recentArticles)
+}}
 {{ if index .Site.Params.homepage "showRecentItems" }}
 {{ $showMoreLinkDest = .Site.Params.homepage.showMoreLinkDest }}
 {{ end }}
