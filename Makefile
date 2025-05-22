@@ -6,11 +6,11 @@ build:
 dev:
 	hugo server -DF -b http://localhost:1313
 
+future:
+	hugo server -F -b http://localhost:1313
+
 preview:
 	hugo server -b http://localhost:1313
-
-future-preview:
-	hugo server -F -b http://localhost:1313
 
 setup:
 	git submodule update --init --recursive
