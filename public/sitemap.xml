@@ -11,9 +11,4 @@
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
-  <url>
-    <loc>https://datalabtechtv.com/posts/postgresql-maximalism/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
 </urlset>
