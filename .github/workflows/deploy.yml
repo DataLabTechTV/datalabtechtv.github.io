@@ -5,11 +5,6 @@ on:
     - cron: '15 11 * * 2' # Every Tuesday at 11:15 UTC (12:15 GMT+1)
   workflow_dispatch:      # Optional: lets you manually trigger the workflow
 
-env:
-  WARNING_MSG: >
-    ⚠️ Warning: This workflow was triggered on branch '${{ github.ref }}'.
-    No deployment will run."
-
 jobs:
   build-deploy:
     if: github.ref != 'refs/heads/gh-pages'
@@ -31,9 +26,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./public
-
-  cant-build-gh-pages:
-    if: github.ref == 'refs/heads/gh-pages'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "${{ env.WARNING_MSG }}"
