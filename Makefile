@@ -1,7 +1,7 @@
 all: build
 
 build:
-	hugo
+	hugo --minify
 
 dev:
 	hugo server -DF -b http://localhost:1313
@@ -15,8 +15,15 @@ future-preview:
 setup:
 	git submodule update --init --recursive
 
-deploy:
-	git subtree push --prefix public/ origin gh-pages
+deploy: build
+	cd public && \
+	rm -rf .git && \
+	git init -b main && \
+	git config core.sshCommand "ssh -i ~/.ssh/datalabtech" && \
+	git add . && \
+	git commit -m "chore: local build deployment" && \
+	git remote add origin git@github.com:DataLabTechTV/datalabtechtv.github.io.git && \
+	git push --force origin main:gh-pages
 
 clean:
 	find -name "*.sav" -delete -or -name "*.bak" -delete
