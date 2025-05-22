@@ -11,7 +11,8 @@ rtl = false
 dateFormat = "2 January 2006"
 logo = "img/logo.png"
 # secondaryLogo = "img/secondary-logo.png"
-# description = "My awesome website"
+images = ["img/banner.png"]
+description = "Covering topics from Data Science and Data Engineering, to MLOps and DevOps, DataLabTechTV.com is a YouTube channel and blog about all things data."
 # copyright = "Copy, _right?_ :thinking_face:"
 
 [params.author]
