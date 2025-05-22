@@ -1,7 +1,7 @@
 ---
 title: PostgreSQL Maximalism
 description: Learn about PostgreSQL's extensions for all use cases.
-date: 2025-05-27
+date: 2025-05-27T12:00:00+0100
 draft: false
 categories: ["Data Engineering"]
 tags: ["databases", "postgres", "extensions", "unedited", "video", "series", "research-notes"]
@@ -11,7 +11,7 @@ tags: ["databases", "postgres", "extensions", "unedited", "video", "series", "re
 
 Unedited research notes for my "PostgreSQL Maximalism" series. This is likely more than enough information, if you're looking into extending Postgres for your storage and querying needs. For an easier-to-digest, follow-up version, check the video series. For your convenience, each extension category is properly annotated in the videos as chapters.
 
-<!-- Embed Part 1 YouTube video here -->
+<iframe width="560" height="315" src="https://www.youtube.com/embed/N36OlwP8U_I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Research
 

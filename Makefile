@@ -4,7 +4,7 @@ build:
 	hugo
 
 dev:
-	hugo server -D -b http://localhost:1313
+	hugo server -DF -b http://localhost:1313
 
 preview:
 	hugo server -b http://localhost:1313
