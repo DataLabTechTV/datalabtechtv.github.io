@@ -12,7 +12,7 @@ dateFormat = "2 January 2006"
 logo = "img/logo.png"
 # secondaryLogo = "img/secondary-logo.png"
 images = ["img/banner.jpg"]
-description = "From Data Science and Data Engineering, to MLOps and DevOps, Data Lab Tech TV is a YouTube channel and Blog about all things data."
+description = "From Data Science and Data Engineering, to MLOps and DevOps, we're a YouTube channel and blog about all things data."
 # copyright = "Copy, _right?_ :thinking_face:"
 
 [params.author]
