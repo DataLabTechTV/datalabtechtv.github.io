@@ -11,3 +11,13 @@
     }
   });
 </script>
+
+{{ with resources.Get "js/cookie-banner.js"| minify | fingerprint }}
+<script
+  src="{{ .RelPermalink }}"
+  integrity="{{ .Data.Integrity }}"
+  crossorigin="anonymous">
+</script>
+{{ end }}
+
+{{ partial "cookie-banner.html" . }}
