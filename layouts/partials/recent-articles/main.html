@@ -1,4 +1,4 @@
-{{ if .Site.RegularPages }}
+{{ if gt .Site.RegularPages 2 }}
 {{ $recentArticles := 5 }}
 {{ $showMoreLinkDest := "/posts/" }}
 {{ if .Site.Params.homepage.showRecent | default false }}
