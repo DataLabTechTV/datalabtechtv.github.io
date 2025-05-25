@@ -1,10 +1,10 @@
 ---
-title: 🔒 Privacy Policy
+title: Privacy Policy
 sharingLinks: false
 layout: simple
 ---
 
-Last updated: May 24, 2025
+Last updated: May 25, 2025
 
 We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, and protect information when you visit our website.
 
@@ -53,7 +53,7 @@ We use only Google Analytics cookies with:
 - Data sharing with Google disabled
 - Data retention set to 14 months
 
-For more details, see our [Cookie Policy](../policy).
+For more details, see our [Cookie Policy](../cookies).
 
 ## 6. International Data Transfers
 

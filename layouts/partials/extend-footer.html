@@ -1,16 +1,10 @@
-<script>
-  document.addEventListener("keydown", function (event) {
-    // Check for ctrl+k or ⌘+k (Mac)
-    const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-    const isCtrlK = (!isMac && event.ctrlKey && event.key == "k");
-    const isCmdK = (isMac && event.metaKey && event.key == "k");
-
-    if (isCtrlK || isCmdK) {
-      event.preventDefault();
-      displaySearch();
-    }
-  });
+{{ with resources.Get "js/search-keybind.js"| minify | fingerprint }}
+<script
+  src="{{ .RelPermalink }}"
+  integrity="{{ .Data.Integrity }}"
+  crossorigin="anonymous">
 </script>
+{{ end }}
 
 {{ with resources.Get "js/cookie-banner.js"| minify | fingerprint }}
 <script
