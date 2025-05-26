@@ -1,5 +1,6 @@
 ---
 title: Cookie Policy
+description: Information about the cookie policy for DataLabTechTV.com.
 sharingLinks: false
 layout: simple
 ---

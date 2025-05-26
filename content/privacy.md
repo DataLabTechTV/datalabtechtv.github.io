@@ -1,5 +1,6 @@
 ---
 title: Privacy Policy
+description: Information about the privacy policy for DataLabTechTV.com.
 sharingLinks: false
 layout: simple
 ---
