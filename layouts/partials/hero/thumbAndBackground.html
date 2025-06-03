@@ -19,7 +19,7 @@
         (and ($.Site.Params.list.layoutBackgroundBlur | default true) ($isParentList))
     ) }}
 
-{{- with $featured -}}
+<!-- {{- with $featured -}}
 {{ if or $disableImageOptimization (strings.HasSuffix . ".svg")}}
 {{ with . }}
 <div class="w-full rounded-md single_hero_basic nozoom">
@@ -34,6 +34,7 @@
 {{ end }}
 {{ end }}
 {{- end -}}
+ -->
 
 {{- with $background -}}
 
