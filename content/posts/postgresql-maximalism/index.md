@@ -3,7 +3,6 @@ title: PostgreSQL Maximalism
 description: Learn about PostgreSQL's extensions for all use cases.
 date: 2025-05-27T12:00:00+0100
 draft: false
-featureImage: http://localhost:1313/posts/postgresql-maximalism/hero.png
 categories: ["Data Engineering"]
 tags: ["databases", "postgres", "extensions", "unedited", "video", "series", "research-notes"]
 ---
