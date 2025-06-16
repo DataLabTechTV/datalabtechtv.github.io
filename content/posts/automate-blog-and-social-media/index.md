@@ -1,7 +1,7 @@
 ---
 title: Automating Hugo Blog and Social Media with GitHub Actions
 description: Learn how to schedule Hugo blog posts and automatically post to social media using GitHub Actions.
-date: 2025-06-24T12:00:00+0100
+date: 2025-07-01T12:00:00+0100
 draft: true
 categories: ["DevOps"]
 tags: ["hugo", "static-site", "github-actions", "automation", "scheduling", "rss", "video"]
