@@ -30,3 +30,4 @@ deploy: build
 clean:
 	find -name "*.sav" -delete -or -name "*.bak" -delete
 	find -name "*Zone.Identifier" -delete
+	find public/ -mindepth 1 -not -name .gitkeep -delete
