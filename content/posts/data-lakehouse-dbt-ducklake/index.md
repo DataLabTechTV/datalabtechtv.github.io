@@ -6,12 +6,24 @@ categories: ["Data Engineering"]
 tags: ["duckdb", "ducklake", "dbt", "minio", "etl"]
 ---
 
+## Summary
 
 Now that you can use [DuckDB](https://duckdb.org/) to power your data lakehouse through [DuckLake](https://ducklake.select/), you'll also save space on snapshots due to the ability to reference parts of parquet files (yes, you can keep all old versions, with little impact to storage), and you'll get improved performance for small change operations due to data inlining, which lets data be stored directly within the metadata database ([SQLite](https://www.sqlite.org/), [PostgreSQL](https://www.postgresql.org/), etc.).
 
 With a little help from [dbt](https://docs.getdbt.com/) and an [unreleased branch](https://github.com/duckdb/dbt-duckdb/issues/564) of [dbt-duckdb](https://github.com/duckdb/dbt-duckdb) adapter, we were able to design a data lakehouse strategy, covering data ingestion, transformation, and exporting, almost exclusively based on SQL!
 
-This project is available as open source on GitHub, at [DataLabTechTV/datalab](https://github.com/DataLabTechTV/datalab), and the `README` will cover most of the details you need to understand it and get it running. Below, we just cover a few of the most interesting components or issues, and provide a few comments about the whole process.
+This project is available as open source on GitHub, at [DataLabTechTV/datalab](https://github.com/DataLabTechTV/datalab), and the `README` will cover most of the details you need to understand it and get it running. In this blog post, we cover some of the most interesting components or issues, and provide a few comments about the whole process. You can also see data lab in action, and learn more about it, by watching the video below!
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+	<iframe
+		src="https://www.youtube.com/embed/zn69Q7FiFfo?si=hUoNsb3bioUR20J6"
+		frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+		referrerpolicy="strict-origin-when-cross-origin"
+		allowfullscreen
+		style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+	></iframe>
+</div>
 
 ## Architecture
 
