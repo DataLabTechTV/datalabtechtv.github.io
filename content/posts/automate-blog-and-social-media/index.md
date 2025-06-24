@@ -6,13 +6,17 @@ categories: ["DevOps"]
 tags: ["hugo", "static-site", "github-actions", "automation", "scheduling", "rss", "video"]
 ---
 
+## Summary
+
+Static sites, by definition, don't have a backend, but you can still automate a lot of your workflow using GitHub Actions. Read below if you want to learn how to setup your GitHub repo for managing and [deploying a Hugo static site](#deploying-a-static-site-on-github). You'll also learn how to [schedule blog posts](#scheduling-hugo-blog-posts), so they go online at a later date without the need for any manual action. And you'll learn how to use RSS and GitHub Actions to [automate social media posting](#automating-social-media-posts-with-rss) for Bluesky, Reddit, and Discord—you can easily add more options yourself, with a little Python coding.
+
 ## Deploying a Static Site on GitHub
 
 A static website doesn't have a backend, so, in theory, you wouldn't be able to schedule posts. However, there is a way to circumvent this. Hosting a static site on GitHub can be done for free, if you create a repo named `<username>.github.io`. Once you do this, whatever you drop into the `main` branch of your repo will be published as a website on that page.
 
 Let's use [Hugo](https://gohugo.io/) as an example for a static website generator. You have a few options, to manage the source code for Hugo.
 
-## Source Code and Output: Repos vs Branches
+### Source and Target Code: Repos vs Branches
 
 You can either create a separate repository, where `public/` is added to `.gitignore`, and then you just setup `public/` as the `<username>.github.io` repo, by either keeping track of individual changes manually with proper commits, or by re-initializing and force pushing each time:
 
@@ -35,7 +39,7 @@ Or, you can use the `<username>.github.io` repo for everything, by setting a sep
 
 Personally, I use the second option, either deploying via a [Makefile](https://github.com/DataLabTechTV/datalabtechtv.github.io/blob/main/Makefile) or, more often, via [GitHub Actions](https://github.com/DataLabTechTV/datalabtechtv.github.io/actions/workflows/deploy.yml) (GHA). This is where you can also set a [custom domain](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site#configuring-an-apex-domain), if you have one.
 
-### Scheduling Hugo Blog Posts
+## Scheduling Hugo Blog Posts
 
 When you create a blog post in Hugo, there are three relevant front matter flags you can set: `draft`, `date`, and `expiryDate`. If you set `draft` to `true`, use a `date` in the future, or an `expiryDate` in the past, then the post won't be compiled when running `hugo` without arguments.
 
@@ -96,7 +100,7 @@ jobs:
           publish_dir: ./public
 ```
 
-Let's it breakdown, step by step.
+Let's break it down, step by step.
 
 When using GHAs, you can set it to activate manually, on push, and/or on a schedule. I avoid push, since I don't want my website to be published as I'm working on a blog post, or changing the website design, before the content is ready. Personally, I set it to run on a schedule, a few minutes after my weekly YouTube video release, which is also when I publish a companion blog post for it:
 
@@ -335,9 +339,9 @@ Each entry is then transformed into a `Post`, with a `title`, `description` (fro
 
 Finally, for each of the `ACTIVE_SOCIALS`, we publish a post. For Bluesky, we use [atproto](https://atproto.blue/), for Reddit, we use [PRAW](https://praw.readthedocs.io/), and, for Discord, we just use [requests](https://requests.readthedocs.io/).
 
-### Final Remarks
+## Final Remarks
 
-In the future, I might turn this into a reusable GitHub Action, but, for now, feel free to fork my repo at [DataLabTechTV/rss-to-social](https://github.com/DataLabTechTV/rss-to-social) and adapt it to your own needs. Remember that you'll need to setup your own "Secrets and variables".
+In the future, I might turn this into a reusable GitHub Action, but, for now, feel free to fork my repo at [DataLabTechTV/rss-to-social](https://github.com/DataLabTechTV/rss-to-social) and adapt it to your own needs. Remember that you'll need to setup your own "Secrets and variables" and enable "Read and write permissions" for GHA on your repo.
 
 ---
 
