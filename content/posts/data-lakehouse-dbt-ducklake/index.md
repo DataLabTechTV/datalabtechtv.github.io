@@ -3,7 +3,7 @@ title: Data Lakehouse with dbt and DuckLake
 description: Learn how to run your ETL pipelines on top of dbt, DuckDB and DuckLake, and get to know data lab.
 date: 2025-06-24T12:00:00+0100
 categories: ["Data Engineering"]
-tags: ["duckdb", "ducklake", "dbt", "minio", "etl"]
+tags: ["duckdb", "ducklake", "dbt", "minio", "etl", "video"]
 ---
 
 ## Summary
