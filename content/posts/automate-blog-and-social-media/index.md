@@ -10,6 +10,17 @@ tags: ["hugo", "static-site", "github-actions", "automation", "scheduling", "rss
 
 Static sites, by definition, don't have a backend, but you can still automate a lot of your workflow using GitHub Actions. Read below if you want to learn how to setup your GitHub repo for managing and [deploying a Hugo static site](#deploying-a-static-site-on-github). You'll also learn how to [schedule blog posts](#scheduling-hugo-blog-posts), so they go online at a later date without the need for any manual action. And you'll learn how to use RSS and GitHub Actions to [automate social media posting](#automating-social-media-posts-with-rss) for Bluesky, Reddit, and Discord—you can easily add more options yourself, with a little Python coding.
 
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+	<iframe
+		src="https://www.youtube.com/embed/pCBVZHlUUVI?si=LznxPZJV_3FYeBgd"
+		frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+		referrerpolicy="strict-origin-when-cross-origin"
+		allowfullscreen
+		style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+	></iframe>
+</div>
+
 ## Deploying a Static Site on GitHub
 
 A static website doesn't have a backend, so, in theory, you wouldn't be able to schedule posts. However, there is a way to circumvent this. Hosting a static site on GitHub can be done for free, if you create a repo named `<username>.github.io`. Once you do this, whatever you drop into the `main` branch of your repo will be published as a website on that page.
