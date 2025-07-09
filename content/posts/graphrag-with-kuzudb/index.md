@@ -318,7 +318,6 @@ Below you'll find a diagram detailing the how the Graph RAG chain works, and cov
               pointer-events: none;">
 </div>
 
-
 ### Graph Retriever
 
 The Graph Retriever component extracts and maps named entities to nodes in the graph. It takes the `user_query` as input, which will be passed to the `entities_prompt` via the `entities_prompt_to_kuzu_inputs` step.
