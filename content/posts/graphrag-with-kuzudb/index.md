@@ -259,7 +259,9 @@ RETURN "Total No. Rels" AS stat, count(*) AS val;
 
 KùzuDB has a `vector` extension that supports HNSW indexing for vectors, similar to [Pinecone](https://www.pinecone.io/learn/series/faiss/hnsw/), [Weaviate](https://weaviate.io/developers/weaviate/concepts/vector-index), or [pgvector](https://github.com/pgvector/pgvector?tab=readme-ov-file#hnsw). It supports semantic search via ANN, which we'll use on the [Graph Retriever](#graph-retriever) component to establish a context based on graph paths.
 
-We precompute node embeddings based on a PyTorch implementation—see the [graph.embedding](https://github.com/DataLabTechTV/datalab/blob/v0.3.0/graph/embedding.py) module in the [datalab](https://github.com/DataLabTechTV/datalab) repo. We use a simplified version of the Fast Random Projection (FastRP) algorithm, without an $L$ component (or, equivalently, setting $\beta=0$), and with the Multi-Layer Perceptron (MLP) extension. This implementation can be run for a graph (e.g., `music_taste`) by calling the following command:
+We precompute node embeddings based on a PyTorch implementation—see the [graph.embedding](https://github.com/DataLabTechTV/datalab/blob/v0.3.0/graph/embedding.py) module in the [datalab](https://github.com/DataLabTechTV/datalab) repo. We use a simplified version of the Fast Random Projection (FastRP) algorithm, where the $L$ component corresponds directly to the node degrees, the $R$ component samples from a normal distribution, and a Multi-Layer Perceptron (MLP) is applied on top of the fixed FastRP embeddings to introduce non-linear activations, enabling the model to learn complex, non-linear mappings for downstream tasks.
+
+This implementation can be run for a graph (e.g., `music_taste`) by calling the following command:
 
 ```bash
 dlctl graph compute embeddings "music_taste" \
