@@ -259,7 +259,7 @@ RETURN "Total No. Rels" AS stat, count(*) AS val;
 
 KùzuDB has a `vector` extension that supports HNSW indexing for vectors, similar to [Pinecone](https://www.pinecone.io/learn/series/faiss/hnsw/), [Weaviate](https://weaviate.io/developers/weaviate/concepts/vector-index), or [pgvector](https://github.com/pgvector/pgvector?tab=readme-ov-file#hnsw). It supports semantic search via ANN, which we'll use on the [Graph Retriever](#graph-retriever) component to establish a context based on graph paths.
 
-We precompute node embeddings, through an implementation in the [data lab](https://github.com/DataLabTechTV/datalab/blob/v0.3.0/graph/embedding.py), using the Fast Random Projection (FRP) algorithm, with the Multi-Layer Perceptron (MLP) extension, based on PyTorch. This implementation can be run for a graph (e.g., `music_taste`) by calling the following command:
+We precompute node embeddings based on a PyTorch implementation—see the [graph.embedding](https://github.com/DataLabTechTV/datalab/blob/v0.3.0/graph/embedding.py) module in the [datalab](https://github.com/DataLabTechTV/datalab) repo. We use a simplified version of the Fast Random Projection (FastRP) algorithm, without an $L$ component (or, equivalently, setting $\beta=0$), and with the Multi-Layer Perceptron (MLP) extension. This implementation can be run for a graph (e.g., `music_taste`) by calling the following command:
 
 ```bash
 dlctl graph compute embeddings "music_taste" \
@@ -305,12 +305,16 @@ We implemented GraphRAG using [LangChain](https://www.langchain.com/), as a [Run
 
 > 📌 Note
 >
-> When we decided to implement our workflow using LangChain, we also looked into [LangGraph](https://langchain-ai.github.io/langgraph/concepts/why-langgraph/), to determine whether it could be useful when working with Graph RAG. While LangGraph is quite an interesting framework, designed for the orchestration of stateful agents, it does not providing specific tooling for working with graphs—think about graphs in the sense of TensorFlow computational graphs, not graphs like knowledge graphs or social networks. LangGraph supports the integration of LLMs, tools, memory, and other useful features, by settings the conditions under which these components interact. Since we didn't need to setup something at this complexity level, we did not use LangGraph here. If you're focusing on stateless Graph RAG, then LangChain is really all you need. In the future, however, we might explore LangGraph, and add state to the implementation we describe here.
+> When we decided to implement our workflow using LangChain, we also looked into [LangGraph](https://langchain-ai.github.io/langgraph/concepts/why-langgraph/), to determine whether it could be useful when working with Graph RAG.
+>
+> While LangGraph is quite an interesting framework, designed for the orchestration of stateful agents, it does not provide specific tooling for working with graphs—think about graphs in the sense of TensorFlow computational graphs, not graphs like knowledge graphs or social networks. LangGraph supports the integration of LLMs, tools, memory, and other useful features, by settings the conditions under which these components interact.
+>
+> Since we didn't need to setup something at this complexity level, we did not use LangGraph here. If you're focusing on stateless Graph RAG, then LangChain is really all you need. In the future, however, we might explore LangGraph, and add state to the implementation we describe here.
 
 Below you'll find a diagram detailing the how the Graph RAG chain works, and covering the three major components: Graph Retriever, Context Assembler, and Answer Generator. The floating rectangles on top, with a filling, are the legend. Each small rectangle inside the three major components is a part of the [RunnableSequence](https://python.langchain.com/api_reference/core/runnables/langchain_core.runnables.base.RunnableSequence.html) that makes the component. The code that implements the diagram is available under the [graph.rag](https://github.com/DataLabTechTV/datalab/blob/v0.3.0/graph/rag.py) module—symbol names in the code should match the names in the small rectangles below.
 
 <div style="position: relative; width: 600px; height: 1600px;">
-  <img src="./graphrag-langchain-pipeline.png"
+  <img src="./graphrag-langchain.png"
        style="position: absolute;
               top: 47.5%;
               left: 70%;
