@@ -12,7 +12,7 @@ In this video, I'll delve into GraphRAG, learning about KùzuDB, node embeddings
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/TBD"
+		src="https://www.youtube.com/embed/m61u3mqu1qY?si=lQo6HNjEbhCN4-hK"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
