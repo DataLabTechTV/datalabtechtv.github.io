@@ -12,7 +12,7 @@ In this video, we reproduce the approach that predicts Survivor winners and appl
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/pIwN7oe54i4"
+		src="https://www.youtube.com/embed/pIwN7oe54i4?si=_1m5GMG8oyeS7KnQ"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
