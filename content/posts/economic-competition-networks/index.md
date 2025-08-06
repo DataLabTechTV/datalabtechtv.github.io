@@ -1,6 +1,6 @@
 ---
 title: Economic Competition Networks
-description: Let's reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economical leaders
+description: Let's reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economic leaders
 date: 2025-08-06T17:00:00+0100
 categories: ["Data Science"]
 tags: ["network-science", "network-analysis", "economy", "world-trade", "market", "video"]
@@ -8,7 +8,7 @@ tags: ["network-science", "network-analysis", "economy", "world-trade", "market"
 
 ## Summary
 
-In this video, we reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economical leaders. We build a country to country competition network based on the Export Similarity Index (ESI), and we use several techniques from network science, like PageRank, community detection, weak component analysis, or the recent common out-neighbor (CON) score, to better understand how countries compete with each other within the world economy, identifying dominating or leading economies, as well as their counterpart weaker or smaller economies.
+In this video, we reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economic leaders. We build a country to country competition network based on the Export Similarity Index (ESI), and we use several techniques from network science, like PageRank, community detection, weak component analysis, or the recent common out-neighbor (CON) score, to better understand how countries compete with each other within the world economy, identifying dominating or leading economies, as well as their counterpart weaker or smaller economies.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
@@ -209,7 +209,7 @@ def top_frac(df: pd.DataFrame, col: str, frac: float = 0.25):
    1. Community analysis, including community mapping, top traded product identification, and trade alignment study (self-sufficiency, external competitiveness).
    2. Weak component analysis, following a similar approach to the community analysis—weak components widen community reach.
    3. Community and weak component comparison.
-   4. Economical pressure analysis.
+   4. Economic pressure analysis.
 
 ### Dynamic Competition Analysis
 
@@ -6655,9 +6655,9 @@ pd.Series(
 
 
 
-#### Economical Pressure (PageRank)
+#### Economic Pressure (PageRank)
 
-Economical pressure can easily be measured using PageRank, as it is a converging metric that aggregates the overall incoming competition strength, increasing its value as the contributing competing countries are themselves under economical pressure.
+Economic pressure can easily be measured using PageRank, as it is a converging metric that aggregates the overall incoming competition strength, increasing its value as the contributing competing countries are themselves under economic pressure.
 
 
 ```python
