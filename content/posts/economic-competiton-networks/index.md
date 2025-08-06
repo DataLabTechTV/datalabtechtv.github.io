@@ -1,18 +1,18 @@
 ---
 title: Economic Competition Networks
 description: Let's reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economical leaders
-date: 2025-08-06T18:00:00+0100
+date: 2025-08-06T17:00:00+0100
 categories: ["Data Science"]
 tags: ["network-science", "network-analysis", "economy", "world-trade", "market", "video"]
 ---
 
 ## Summary
 
-In this video, we reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economical leaders.
+In this video, we reproduce the approach that predicts Survivor winners and apply it to Economic Competition Networks to better understand world trade and economical leaders. We build a country to country competition network based on the Export Similarity Index (ESI), and we use several techniques from network science, like PageRank, community detection, weak component analysis, or the recent common out-neighbor (CON) score, to better understand how countries compete with each other within the world economy, identifying dominating or leading economies, as well as their counterpart weaker or smaller economies.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/TBD"
+		src="https://www.youtube.com/embed/pIwN7oe54i4"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
