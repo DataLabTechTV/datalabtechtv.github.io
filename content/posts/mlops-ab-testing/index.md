@@ -12,7 +12,7 @@ Learn how to implement an end-to-end machine learning workflow, from data ingest
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/MGuj13NcdjE"
+		src="https://www.youtube.com/embed/MGuj13NcdjE?si=LCpbSbdgiZcwbIEj"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
