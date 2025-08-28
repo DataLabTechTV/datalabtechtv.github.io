@@ -2,13 +2,14 @@
 title: "MLOps: A/B Testing with MLflow, Kafka, and DuckLake"
 description: Learn how to implement an end-to-end machine learning workflow, from data ingestion, to A/B testing and monitoring, using MLflow, Kafka and DuckLake.
 date: 2025-08-27T17:00:00+0100
+lastmod: 2025-08-28T15:57:00+0100
 categories: ["MLOps"]
 tags: ["mlflow", "ducklake", "kafka", "monitoring", "ab-testing", "video"]
 ---
 
 ## Summary
 
-Learn how to implement an end-to-end machine learning workflow, from data ingestion, to A/B testing and monitoring, using MLflow, Kafka and DuckLake. We'll discuss model training and tracking with MLflow, real-world deployment approaches, how to track inferences and feedback in your data lakehouse using Kafka and DuckLake, and how to compute monitoring statistics such as prediction drift, feature drift, or estimated performance, for unlabeled data, as well as taking advantage of user feedback to estimate model error. This should give you the tools you need to build and maintain your own ML lifecycle.
+Learn how to implement an end-to-end machine learning workflow, from data ingestion, to A/B testing and monitoring, using MLflow, Kafka and DuckLake. We'll discuss model training and tracking with MLflow, real-world deployment approaches, how to track inference results and feedback in your data lakehouse using Kafka and DuckLake, and how to compute monitoring statistics such as prediction drift, feature drift, or estimated performance, for unlabeled data, as well as taking advantage of user feedback to estimate model error. This should give you the tools you need to build and maintain your own ML lifecycle.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
@@ -35,17 +36,17 @@ Similarly, the Data Engineer also overlaps with the ML Engineer, particularly re
 
 ## Architecture
 
-In the diagram below, we highlight the Data Engineering, Data Science, and ML Engineering responsibilities. In blue, you'll be able to tracking any the training flow, in yellow the evaluation flow, and in green the inference flow. The middle layer is an overview on the data schemas for DuckLake tables and Kafka topics. On the bottom, you'll find the service layer, with the REST API, and the Kafka producers and consumers.
+In the diagram below, we highlight the Data Engineering, Data Science, and ML Engineering responsibilities. In blue, you'll be able to track the training flow, in yellow the evaluation flow, and in green the inference flow. The middle layer is an overview on the data schemas for DuckLake tables and Kafka topics. On the bottom, you'll find the service layer, with the REST API, and the Kafka producers and consumers.
 
 ![MLOps End-to-End Architecture](./mlops-e2e-architecture.png)
 
-In our implementation, FastAPI was responsible for initializing the Kafka producers and consumers, but in a real-world scenario this would be done separately, each running in their own container.
+In our implementation, FastAPI was responsible for initializing the Kafka producers and consumers, but in a real-world scenario this would be done separately, each running on their own container.
 
 Why Kafka and not something else, like gRPC or Redis Pub/Sub? Kafka acts as an event log, so it provides topic replayability, which is great for compliance, but also for debugging. It can also front-face your product in a way that more brokers can be deployed in groups, handling partitioned messages to the same topic, which is a great way to scale up and down as required. The trade-off is that a controller and a single broker will require ~600 MiB of RAM to run, which is usually acceptable, but, depending on your priorities, it might be too much for basic RPC or queuing, and this will only provide replayability as an advantage, but not partitioning or the reliability of multiple brokers.
 
 ## Orchestration
 
-Previously, you hadn't implemented any approach for orchestration on [datalab](https://github.com/DataLabTechTV/datalab/), but with the new ML package, this gained more relevance, so we opted to use a [just](https://just.systems/man/en/) for handling tasks via the command line. This is yet another great tool in Rust, that mimics the `make` command, but it's built specifically for running tasks, as a opposed to building files. Implementing tasks in a `Makefile` usually requires that those targets are added as dependencies of the `.PHONY` target, so that `make` knows they won't produce a file. This would avoid that a task with a name matching an existing file would skip running due to the file existing and being up-to-date. Instead, when using a `justfile`, all targets are essentially `.PHONY`. In addition, since `just` is a tool specifically designed to run tasks, it also provides several utilities that simplify your life. For example, preloading your existing `.env` is as easy as adding:
+Previously, we hadn't implemented any approach for orchestration on [datalab](https://github.com/DataLabTechTV/datalab/), but with the new ML package, this gained more relevance, so we opted to use [just](https://just.systems/man/en/) for handling tasks via the command line. This is yet another great tool built in Rust, that mimics the `make` command, but it's specifically designed for running tasks, as a opposed to building files. Implementing tasks in a `Makefile` usually requires that those targets are added as dependencies of the `.PHONY` target, so that `make` knows they won't produce a file. This would avoid that a task with a name matching an existing file would be skipped due to the file existing and being up-to-date. Instead, when using a `justfile`, all targets are essentially `.PHONY`. In addition, since `just` is a tool specifically designed to run tasks, it also provides several utilities that simplify your life. For example, preloading your existing `.env` is as easy as adding:
 
 ```just
 set dotenv-load
@@ -64,7 +65,7 @@ default:
     just -l
 ```
 
-The first task is the one that's just by default when invoking `just` without any arguments. And yes, `just` can call `just` from other tasks. For example, we do this:
+The first task is the one that's run by default when invoking `just` without any arguments. And yes, `just` can call `just` from other tasks. For example, we do this:
 
 ```just
 check-init-sql:
@@ -89,27 +90,27 @@ As a way to test our workflow, we decided to train a model to classify user-gene
 We then trained four models, combining two algorithms and two feature sets:
 
 1. Logistic Regression + TF-IDF
-2. Logistic Regression + Embeddings (`all-MiniLM-L6-v2`)
+2. Logistic Regression + Embeddings ([all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2))
 3. XGBoost + TF-IDF
-4. XGBoost + Embeddings (`all-MiniLM-L6-v2`)
+4. XGBoost + Embeddings ([all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2))
 
 For each model, we tracked the following metadata and artifacts on MLflow:
 
 - Metadata
-	- Data source
-	- Hyperparameter grid
-	- Input/output data schema and shape
+	- Data source (dataset tags)
 	- Algorithm/method used
 	- Features used
-	- Evaluation metrics
+	- Hyperparameter grid
+	- Cross-validation config
+	- Evaluation metrics (validation and testing)
+	- Input datasets (schema and shape)
 - Artifacts
-	- Serialized model
-	- Model signature (input/output format)
+	- Serialized model with input/output signature
 	- Python dependencies
 
 We used the following two helper functions, at the beginning and end of our training function, which helped to keep the training code clean.
 
-At the beginning of a run (training starting), we pointed to the correct MLflow server, created the Experiment, if it didn't exist, and started a run with name based on the algorithm/method and feature set. Then, we use `mlflow.set_tags` to track metadata, including dataset based metadata, which is not yet visible in the UI when associated with a logged dataset directly. We also use `mlflow.log_inputs` to log the schema and size of the training and test sets. See next:
+At the beginning of a run (training starting), we point to the correct MLflow server, create the experiment, if it doesn't exist, and start a run with a name based on the algorithm/method and feature set. Then, we use `mlflow.set_tags` to track metadata, including dataset based metadata, which is not yet visible in the current version of the MLflow UI when associated with a logged dataset directly. We also use `mlflow.log_inputs` to log the schema and size of the training and test sets. See next:
 
 ```python
 def mlflow_start_run(
@@ -208,7 +209,7 @@ Please see our [docker-compose.yml](https://github.com/DataLabTechTV/datalab/blo
 
 We used a train/test split of 80/20, and then split our training set into 3-folds for validation. Our models were trained and optimized using cross-validation and F1 scoring over a minimal hyperparameter grid. For each model, we provided the accuracy and F1 score for the best fold, as well as for the test set. These were logged into MLflow, as described above.
 
-Out of the four models, we selected our best model, which was XGBoost + Embeddings, and Logistic Regression + TF-IDF, which was the most different model, and served these models through a unique endpoint, randomly selecting one of them per request, for A/B testing.
+Out of the four models, we selected the best model, which was XGBoost + Embeddings, along with the most different model, Logistic Regression + TF-IDF, and served these models through a unique endpoint, randomly selecting one of them per request, for A/B testing.
 
 Each inference was assigned a UUID and a creation date, and then sent to a Kafka topic. A topic consumer buffered these requests until hitting a large enough batch or a given timeout, at which point they were flushed into a DuckLake catalog with encrypted storage (remember, this is user data). An example of how to call this endpoint is provided in the `justfile`:
 
@@ -238,7 +239,7 @@ mlops-test-inference: check-curl
     curl -f -X GET "http://localhost:8000/inference/logs/flush"
 ```
 
-We also provided an API endpoint where users were able to provide a feedback score (1.0 or 0.0 for our depression classifier), based on the inference UUID. Multiple requests with the same inference UUID appended the feedback to the `feedback DOUBLE[]` column.
+We also provided an API endpoint where users were able to submit a feedback score (1.0 or 0.0 for our depression classifier), based on the inference UUID. Multiple requests with the same inference UUID appended the feedback to the `feedback DOUBLE[]` column.
 
 ## Deployment
 
@@ -247,13 +248,13 @@ Below, we cover two approaches for model deployment:
 1. Using MLflow to build a Docker image per model.
 2. Building your own custom FastAPI REST endpoint.
 
-The MLflow approach provides a more straightforward and standard way to deploy, but each model requires its own separate deployment, and you can't control the output—for example, if you want to return the output from `predict_proba` for a scikit-learn model, instead using `predict`, then you'd need to code that into your model's prediction function before logging it to MLflow.
+The MLflow approach provides a more straightforward and standard way to deploy, but each model requires its own separate deployment, and you can't control the output—for example, if you want to return the output from `predict_proba` for a scikit-learn model, instead of using `predict`, then you'd need to code that into your model's prediction function before logging it to MLflow.
 
-The custom approach provides more flexibility and potential for optimization—for example, resource sharing for multiple models, or a custom environment with reduced dependencies. Moreover, you can still create your own Docker images when implementing your own REST endpoint. This is the preferred approach by seasoned ML Engineers, and this is what we do here as well, since our inference results return probabilities and need to be logged to DuckLake via Kafka.
+The custom approach provides more flexibility and potential for optimization—for example, we can share resources for multiple models, or build a custom environment with minimal dependencies. Moreover, we can still create our own Docker image for a custom REST endpoint. This is the preferred approach by seasoned ML Engineers, and this is what we do here as well, even more so since our inference results return probabilities and need to be logged to DuckLake via Kafka.
 
 ### MLflow Models
 
-While MLflow provides an out-of-the-box approach to deploy logged models, the Docker images it produces tend to be huge by default (~25 GB for the `datalab` project). You'll need to properly determine the minimum required dependencies when logging your model, if you want to make sure that the resulting image's size is optimized. Even then, this deployment approach will produce individual images per model, which is good for isolation, but harder on resource management and cost. Instead, you might want to build your own custom solution for deployment based on something like FastAPI, which we will describe in the following section. Meanwhile, here's an example of how to use the MLflow's workflow for deployment.
+While MLflow provides an out-of-the-box approach to deploy logged models, the Docker images it produces tends to be huge by default (~25 GB for the `datalab` project). You'll need to properly determine the minimum required dependencies when logging your model, if you want to make sure that the resulting image size is optimized. Even then, this deployment approach will produce individual images per model, which is good for isolation, but harder on resource management and cost. Instead, you might want to build your own custom solution for deployment, which we will describe in the following section. Meanwhile, here's an example on how to use the MLflow's deployment workflow.
 
 In order to create a Docker image for your model, you can simply run the following command, providing it a model URI and the target image name:
 
@@ -290,9 +291,9 @@ curl -X POST "http://localhost:5001/invocations" \
 
 ### Custom API
 
-Like we said, in practice, it's more common to deploy models using a custom REST API, usually created using FastAPI, often chosen due to its self-documentation via Swagger UI and ReDoc. This also lets you produce your own Docker image, optimizing it as much as you'd like, and you can also serve multiple models using the same API, which you cannot do with the MLflow approach.
+Like we said, in practice, it's more common to deploy models using a custom REST API, usually created with FastAPI, often chosen due to its self-documenting approach via [Swagger UI](https://swagger.io/tools/swagger-ui/) and [ReDoc](https://github.com/Redocly/redoc). This also lets you produce your own Docker image, optimizing it as much as you'd like, and you can also serve multiple models using the same API, which you cannot do with the MLflow approach.
 
-Imagine a 25 GiB image for each of your classifiers, the time it would take to build and deploy, and the resources it would require! This is why most ML engineer create their own web services to deploy their models.
+Imagine a 25 GiB image for each of your classifiers, the time it would take to build and deploy, and the resources it would require! This is why most ML Engineers create their own web services to deploy their models.
 
 Our API provides the following two main endpoints, which encapsulate the whole workflow logic.
 
@@ -342,7 +343,7 @@ async def inference(
 
 ## Monitoring Strategy
 
-During monitoring, we compare reference data with the current data. Our reference data is always based on the training set (e.g., prediction labels over the training set, features from the training set). Our current data, on the other hand, is based on a sliding window of 7 days, that we compute per day.
+During monitoring, we compare reference data with the current data. Our reference data is always based on the training set (e.g., prediction labels or features based on the training set). Our current data, on the other hand, is based on a sliding window of 7 days, that we compute per day.
 
 Below, we will describe the metrics that we considered, along with our particular implementation, which you can find in the [datalab](https://github.com/DataLabTechTV/datalab/blob/v0.6.0/ml/monitor.py) codebase, under `ml.monitor`.
 
@@ -358,11 +359,11 @@ Feature drift, or data drift, is usually concerned with comparing the distributi
 
 #### Per Feature
 
-We start by comparing each feature individually for reference and current data. For example, if our features are text, we might compare term distributions or the distributions of TF-IDF over all examples. If we're working with embeddings, it's similar—assuming rows are examples and columns are features, we simple compare equivalent columns on the reference and current data.
+We start by comparing each feature individually for the reference and current datasets. For example, if our features are text, we might compare term distributions or the distributions of TF-IDF over all examples. If we're working with embeddings, it's similar—assuming rows are examples and columns are features, we simply compare equivalent columns on the reference and current data.
 
 Again, there are several statistical approaches that we can use here, but let's assume we're again working with a Kolmogorov–Smirnov test, which provides the D-statistic, as well as the p-value.
 
-Once we compare all pairs of features, we'll end up with 1D array with a final metric. If this metric is the D-statistic, it's common for us to take the median, which is less sensitive to outliers, and compute an aggregate feature drift score. Another, less informative, approach is to count the fraction of p-values < 0.05, which just tells us how many features drifted significantly, thus imputing drift to the overall data.
+Once we compare all pairs of features, we'll end up with a 1D array with a score per feature. If this score is the D-statistic, it's common for us to take the median, which is less sensitive to outliers, and compute an aggregate feature drift score. Another, less informative, approach is to count the number of p-values < 0.05 and return that fraction, which just tells us how many features drifted significantly, thus imputing drift to the overall data.
 
 This is not our implementation here. Instead, we relied on a per dataset feature drift, as described next.
 
@@ -373,7 +374,7 @@ For this approach, all features are used simultaneously. A simple way to achieve
 - Reference → 0
 - Current → 1
 
-Keep in mind that these are not the labels in your original data, so, for example, our depression training set contained label 0 for not depression and label 1 for depression, but here the whole dataset will have label 0, regardless of whether we're considering a negative or positive example of depression. Now, instead, we're trying to distinguish between the data in reference and current.
+Keep in mind that these are not the labels in your original data, so, for example, our depression training set contained label 0 for not depression and label 1 for depression, but here the whole dataset will have label 0, regardless of whether we're considering a negative or positive example of depression. Now, instead, we're trying to distinguish between examples in reference or current.
 
 After training a simple classifier (e.g., logistic regression) with the described dataset, we evaluate using ROC AUC.
 
@@ -389,22 +390,22 @@ For the model we want to test (e.g., logistic regression with TF-IDF features), 
 
 $\text{pred\_prob} \mapsto (\text{pred\_label} = \text{correct\_label})$
 
-Where $\text{pred\_prob}$ is the output of `predict_proba` for the model we're testing, over examples in the original training set, $\text{pred\_label}$ is corresponding the binary output after applying the decision threshold (e.g., $\text{pred\_label} \leftarrow \text{pred\_prob} \ge 0.5$), and $\text{correct\_label}$ is the target on the original training set, used to train the model we're testing.
+Where $\text{pred\_prob}$ is the output of `predict_proba` for the model we're testing, over examples in the original training set, $\text{pred\_label}$ is the corresponding binary output after applying the decision threshold (e.g., $\text{pred\_label} \leftarrow \text{pred\_prob} \ge 0.5$), and $\text{correct\_label}$ is the target on the original training set, used to train the model we're testing.
 
-Once we have the isotonic regressor (one per model to test), we'll be able to predict the inference correctness for new unseen examples, and from that we'll be able to obtain true and false positives and negatives, and calculate evaluation metrics like accuracy or F1 score.
+Once we have the isotonic regressor (one per model to test), we're be able to predict the inference correctness for new unseen examples, and, from that, we're then able to obtain true and false positives and negatives, and calculate evaluation metrics like accuracy or F1.
 
 ### User Feedback
 
-Finally, based on user feedback, we'll also be able to a calculate Brier score per inference result, comparing our binary prediction to a probabilistic user feedback score. We can then average the Brier scores to obtain a global error-like metric (notice the similarity with mean-squared error, MSE):
+Finally, based on user feedback, we're also able to a calculate Brier score per inference result, comparing our binary prediction to a probabilistic user feedback score. We can then average the Brier scores to obtain a global error-like metric (notice the similarity with mean-squared error, MSE):
 
 $\displaystyle\text{Avg}(BS) = \frac{1}{n}\sum_{i=1}^n\left(\text{prediction}_i - \frac{1}{m}\sum\_{j=1}^m\text{feedback}\_{ij}\right)$
 
 Where:
 
-- $\text{prediction}_i \in \{0, 1\}$
+- $\text{prediction}_i \in \\{0, 1\\}$
 - $\text{feedback}_{ij} \in [0, 1]$.
 
-Similarly to MSE, lower average Brier scores are better:
+Similarly to MSE, a lower average Brier score is better:
 
 - 0 is a perfect calibration.
 - 1 is the worst possible outcome.
@@ -416,28 +417,28 @@ Other elements that we might track to extend observability would be:
 - Data Quality
 	- Shared responsibility with data engineering.
 	- Rule-based validations (e.g., check for all zeros in predictions, or missing values).
-	- For example, expressed as an aggregated score of rule compliance.
+	- For example, expressed as an aggregate score of rule compliance.
 - Model Explainability
 	- [SHAP](https://shap.readthedocs.io/en/latest/) (SHapley Additive exPlanations)
 	- [LIME](https://github.com/marcotcr/lime) (Local Interpretable Model-agnostic Explanations)
 
-## Simulating Inferences and Feedback
+## Simulating Inference and Feedback
 
 Since we do not have a production system, we simulate inference requests and user feedback, in order to obtain credible data to test our monitoring statistics with. We use a dataset external to our train/test set, also from Hugging Face, to help with this task: [joangaes/depression](https://huggingface.co/datasets/joangaes/depression). We call this our monitor set. This follows a similar structure to the train/test set, with a text column and a label column for depression or not depression.
 
 Using this data, we simulate inference and feedback assignment in multiple passes (default 3) over the monitor set, where we:
 
-1. Sample a fraction of the dataset (default 0.01, or 1%).
+1. Sample a fraction of the dataset (optional).
 2. Run inference over all examples using a given decision threshold (default 0.5).
 3. Log results to the data lakehouse with a random date (default range of 4 weeks).
-4. Provide feedback for a fraction (default $[0.45, 0.55]$) of those results...
-5. ...simulating wrong feedback by using the complement over a fraction of feedback outputs (default $[0.10, 0.25]$) of the considered results.
+4. Provide feedback for a fraction (default range of $[0.45, 0.55]$) of those results...
+5. ...simulating wrong feedback by using the complement over a fraction of feedback outputs (default range of $[0.10, 0.25]$) of the considered results.
 
-This data should contain mostly correct feedback, with a few errors, simulating a real-world scenario. Inferences might have no feedback, or any number of feedback scores up to the number of passes, i.e., 0 to 3 feedback scores.
+Simulated data should contain mostly correct feedback, with a few errors, simulating a real-world scenario. Inferences might have no feedback, or any number of feedback scores up to the number of passes, i.e., 0 to 3 feedback scores.
 
 ## A/B Testing Results
 
-Based on the simulated inferences and user feedback, we now look at and interpret the monitoring statistics.
+Based on the simulated inference results and user feedback, we now look at and interpret the monitoring statistics.
 
 ### Inferences Over Time
 
@@ -447,13 +448,13 @@ We track the number of inferences ran per day, over the simulated period of one 
 
 ### Prediction Drift
 
-Also known as concept drift, we measure prediction drift based on the D-statistic from the Kolmogorov–Smirnov test. The lower the D-statistic the less prediction drift there is. As we can see, prediction drift is reaching critical levels for the logistic regression model, while being much lower for the XGBoost model, despite still showing a considerable magnitude. However, the logistic regression is particularly concerning, as the D-statistic is not only high, but also extremely consistent over time, indicating an issue with that model, beyond just optimization.
+Also known as concept drift, we measure prediction drift based on the D-statistic from the Kolmogorov–Smirnov test. The lower the D-statistic, the less prediction drift there is. As we can see, prediction drift is reaching critical levels for the logistic regression model, while being much lower for the XGBoost model, despite still showing a considerable magnitude. However, the logistic regression is particularly concerning, as the D-statistic is not only high, but also extremely consistent over time, indicating an issue with that model, beyond just optimization.
 
 ![Prediction Drift](./pred_drift.png)
 
 ### Feature Drift
 
-Also known as data drift, feature drift is measured based on ROC AUC. As such, we are looking for values of ~0.5, indicating no feature drift. As we can see, there is also considerable feature drift for both models. This indicates that the training data was not representative of incoming examples for inference. It might also be the case that data preprocessing requires a few normalization steps to make sure the text is formatted similarly in both the reference and current data. For our models, we're probably suffering from both problems, as we didn't put much effort into the preprocessing stage. This goes to show the importance of good data engineering.
+Also known as data drift, feature drift is measured based on ROC AUC. As such, we are looking for values of ~0.5, indicating no feature drift. As we can see, there is also considerable feature drift for both models. This indicates that the training data was not representative of incoming examples for inference. It might also be the case that data preprocessing requires a few normalization steps to make sure the text is formatted similarly across reference and current data. For our models, we're probably suffering from both problems, as we didn't put much effort into the preprocessing stage. This goes to show the importance of good data engineering.
 
 ![Feature Drift](./feat_drift.png)
 
@@ -465,10 +466,10 @@ While previous metrics indicate that our models are not properly calibrated, we'
 
 ### User Feedback
 
-Finally, based on user feedback, we're obtaining inconsistent average Brier scores over time, most likely due to the small monitor set sample that we used. However, overall, the lowest (better) values seem to be for the XGBoost model, indicating we might obtain better results by investing on that model, but we'd need more information.
+Finally, based on user feedback, we're obtaining inconsistent average Brier scores over time, most likely due to the small monitor set sample that we used. However, overall, the lowest (best) values seem to be for the XGBoost model, indicating we might obtain better results by investing on that model, but we'd need more information.
 
 ![Average User Feedback Brier Score](./user_brier.png)
 
 ## Final Remarks
 
-Hopefully, this is enough to get you started on MLOps and ML Engineering, providing a comprehensible example of an end-to-end workflow and the types of tasks we're expected to work on as ML Engineers. In future videos and blog posts, I expect to go deeper into the infrastructure side of Data Engineering and MLOps, moving into model deployment, and real-time model monitoring.
+Hopefully, this is enough to get you started on MLOps and ML Engineering, providing a comprehensible example of an end-to-end workflow and the types of tasks we're expected to work on as an ML Engineer. In future videos and blog posts, I expect to go deeper into the infrastructure side of Data Engineering and MLOps, moving into model deployment, and real-time model monitoring.
