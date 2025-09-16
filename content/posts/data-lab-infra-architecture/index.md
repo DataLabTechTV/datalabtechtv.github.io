@@ -12,7 +12,7 @@ In this video, we'll learn how to design a modern data stack, built for home lab
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/hN3yNT_TP5E"
+		src="https://www.youtube.com/embed/hN3yNT_TP5E?si=nFxVLK5V9gPu9_Tc"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
