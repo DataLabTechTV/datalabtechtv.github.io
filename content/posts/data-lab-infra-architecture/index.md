@@ -3,7 +3,7 @@ title: "Data Lab Infra - Part 1: Architecture Design"
 description: Learn how to design a modern data stack, built for home labs, freelancing data experts, or general on-premise needs.
 date: 2025-09-16T12:00:00+0100
 categories: ["DevOps"]
-tags: ["proxmox", "minio", "gitlab", "docker", "postgres", "kafka", "mlflow", "ollama", "ci-cd", "secrets-management", "architecture", "data-stack", "video"]
+tags: ["homelab", "architecture", "data-stack", "proxmox", "minio", "gitlab", "docker", "postgres", "kafka", "mlflow", "ollama", "ci-cd", "secrets-management", "video"]
 ---
 
 ## Summary
