@@ -16,7 +16,7 @@ These skills are loosely transferable to cloud platforms like AWS, GCP or Azure,
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/mVAjyjYow20"
+		src="https://www.youtube.com/embed/mVAjyjYow20?si=E5Wv6DV6vo6woKpr"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
