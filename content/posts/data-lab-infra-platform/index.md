@@ -62,6 +62,82 @@ Backups will be added later on and they will be application-specific. The overal
 
 For our current use-case, backups are not particularly concerning, as we can always re-ingest our lakehouse datasets, or recreate our GitLab repos, as these will only be used for CI/CD, which obvious also require that Docker images are re-registered, and variables and secrets are re-added. While this might justify setting up a proper backup strategy, failure wouldn't be catastrophic. This is perfectly fine for a home lab setting, where we're constantly tearing down and re-deploying our infrastructure.
 
+## Docker VMs
+
+We'll provision three Docker VMs using [Terraform](https://developer.hashicorp.com/terraform), the [bpg/proxmox](https://registry.terraform.io/providers/bpg/proxmox/latest) provider, and [cloud-init](https://cloudinit.readthedocs.io/en/latest/):
+
+- `docker-gitlab`, where our GitLab Runner will run CI/CD jobs;
+- `docker-shared`, to deploy the core services for our data stack (PostgreSQL, Apache Kafka, etc.);
+- `docker-apps`, where project-specific services will live.
+
+### Cloud-Init
+
+Wait, so did we drop Packer? Yes, we did. We ended up going with a simpler cloud-init config instead, since there really isn't much to deploy on each VM, or too much to gain from building a single image to deploy only three Docker VMs. We might still do Packer in the future, for the educational value, but, for the home lab, we want to keep it as minimalistic as possible.
+
+Here's the cloud-init config that we used to setup our Docker VMs. This was directly extracted from our Terraform config, which is currently available at the `dev` branch of the [datalab](https://github.com/DataLabTechTV/datalab/) repo, so you'll find `${...}` blocks which represent variable or resource output replacements.
+
+```yaml
+#cloud-config
+hostname: "${local.docker[count.index].name}"
+password: "${random_password.docker_vm[count.index].result}"
+chpasswd:
+  expire: false
+ssh_pwauth: true
+apt:
+  sources:
+	docker:
+	  source: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
+	  key: |
+		${indent(8, chomp(data.http.docker_gpg.response_body))}
+package_update: true
+package_upgrade: true
+packages:
+  - qemu-guest-agent
+  - docker-ce
+write_files:
+  - path: /etc/systemd/system/docker.service.d/override.conf
+	owner: 'root:root'
+	permissions: '0600'
+	content: |
+	  [Service]
+	  ExecStart=
+	  ExecStart=/usr/bin/dockerd
+  - path: /etc/docker/daemon.json
+	owner: 'root:root'
+	permissions: '0600'
+	content: |
+	  {
+		"hosts": ["fd://", "tcp://0.0.0.0:2375"],
+		"containerd": "/run/containerd/containerd.sock"
+	  }
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - netplan apply
+  - usermod -aG docker ubuntu
+  - reboot
+```
+
+We use the `apt` block to add the official repo for Docker, so that we can install `docker-ce` with the latest version of Docker. Then, we override the config for `docker.service`, which essentially means removing the arguments from `dockerd` so that `/etc/docker/daemon.json` gets used instead. We then reproduce the original CLI config and add `tcp://0.0.0.0:2375` to the listening hosts for Docker. This will let us access Docker externally, as described in the following section.
+
+### Client Access
+
+On your local machine, create a context for each Docker VM:
+
+```bash
+docker context create docker-gitlab --docker "host=tcp://docker-gitlab:2375"
+docker context create docker-shared --docker "host=tcp://docker-shared:2375"
+docker context create docker-apps --docker "host=tcp://docker-apps:2375"
+```
+
+You can then switch to any context and run Docker commands as usual:
+
+```bash
+docker context use docker-gitlab
+docker ps
+```
+
+Often, custom shell prompts, like [Starship](https://starship.rs/), will display your current Docker context, when it's something other than the default ones. I definitely recommend Starship for this, as it supports any shell, including Bash, Fish, or even PowerShell, and it will display your Docker context by default.
+
 ## GitLab VM
 
 We'll provision a GitLab instance, which will power multiple features of our home lab, including the container registry for custom docker images—be it our own project-specific services or extended installations for core services—and also GitOps, using CI/CD to run docker compose deployment jobs, along with variables to store configurations and secrets.
@@ -81,9 +157,7 @@ This is used on the cloud-init config shown in the following section.
 
 ### Cloud-Init
 
-Wait,  so did we drop Packer? Yes, we did. We ended up going with a simpler cloud-init config instead, since there really isn't much to deploy on each VM, or too much to gain from building a single image to deploy only three Docker VMs. We might still do Packer in the future, for the educational value, but, for the home lab, we want to keep it as minimalistic as possible.
-
-Here's the cloud-init config that we used to setup our GitLab VM. This was directly extracted from our Terraform config, which is currently available at the `dev` branch of the [datalab](https://github.com/DataLabTechTV/datalab/) repo, so you'll find `${...}` blocks which represent variable or resource output replacements.
+Here's the cloud-init config that we used to setup our GitLab VM:
 
 ```yaml
 #cloud-config
@@ -357,80 +431,6 @@ The job will trigger immediately, and you'll be able to find its status and outp
 ![Data Lab Infra - Platform - Job Log 2](./data-lab-infra-platform-job-log-2.png)
 
 Moving forward, we'll take advantage of the CI/CD features to setup a GitOps workflow to manage the docker compose stack for our data lab. Stay tuned for part 4 of this series!
-
-## Docker VMs
-
-We'll provision three Docker VMs using [Terraform](https://developer.hashicorp.com/terraform), the [bpg/proxmox](https://registry.terraform.io/providers/bpg/proxmox/latest) provider, and [cloud-init](https://cloudinit.readthedocs.io/en/latest/):
-
-- `docker-gitlab`, where our GitLab Runner will run CI/CD jobs;
-- `docker-shared`, to deploy the core services for our data stack (PostgreSQL, Apache Kafka, etc.);
-- `docker-apps`, where project-specific services will live.
-
-### Cloud-Init
-
-The cloud-init config for Docker VMs is the following:
-
-```yaml
-#cloud-config
-hostname: "${local.docker[count.index].name}"
-password: "${random_password.docker_vm[count.index].result}"
-chpasswd:
-  expire: false
-ssh_pwauth: true
-apt:
-  sources:
-	docker:
-	  source: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
-	  key: |
-		${indent(8, chomp(data.http.docker_gpg.response_body))}
-package_update: true
-package_upgrade: true
-packages:
-  - qemu-guest-agent
-  - docker-ce
-write_files:
-  - path: /etc/systemd/system/docker.service.d/override.conf
-	owner: 'root:root'
-	permissions: '0600'
-	content: |
-	  [Service]
-	  ExecStart=
-	  ExecStart=/usr/bin/dockerd
-  - path: /etc/docker/daemon.json
-	owner: 'root:root'
-	permissions: '0600'
-	content: |
-	  {
-		"hosts": ["fd://", "tcp://0.0.0.0:2375"],
-		"containerd": "/run/containerd/containerd.sock"
-	  }
-runcmd:
-  - systemctl enable --now qemu-guest-agent
-  - netplan apply
-  - usermod -aG docker ubuntu
-  - reboot
-```
-
-This is less complex than the GitLab one, so I'll just make a few notes. We essentially use the `apt` block to add the official repo for Docker, so that we can install `docker-ce` with the latest version of Docker. Then, we override the config for `docker.service`, which essentially means removing arguments from `dockerd` so that `/etc/docker/daemon.json` gets used instead. We then reproduce the original CLI config under this file and add `tcp://0.0.0.0:2375` to the listening hosts for Docker. This will let us access Docker externally, as described in the following section.
-
-### Client Access
-
-On your local machine, create a context for each Docker VM:
-
-```bash
-docker context create docker-gitlab --docker "host=tcp://docker-gitlab:2375"
-docker context create docker-shared --docker "host=tcp://docker-shared:2375"
-docker context create docker-apps --docker "host=tcp://docker-apps:2375"
-```
-
-You can then switch to any context and run Docker commands as usual:
-
-```bash
-docker context use docker-gitlab
-docker ps
-```
-
-Often, custom shell prompts, like [Starship](https://starship.rs/), will display your current Docker context, when it's something other than the default ones. I definitely recommend Starship for this, as it supports any shell, including Bash, Fish, or even PowerShell, and it will display your Docker context by default.
 
 ## Final Remarks
 
