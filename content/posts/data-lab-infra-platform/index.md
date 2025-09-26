@@ -10,7 +10,7 @@ tags: ["homelab", "platform", "proxmox", "terraform", "cloud-init", "gitlab", "d
 
 On part 3 of this series, you'll learn how to provision Proxmox VMs with Terraform, using QEMU to build on top of the Ubuntu's official cloud image (qcow2).
 
-We'll deploy GitLab and Docker using cloud-init, configuring GitLab as a container registry, and deploying a shared Docker runner for CI/CD, which will run on a separate VM from GitLab.
+We'll deploy GitLab and Docker using cloud-init, configuring GitLab as a container registry, and deploying a shared Docker runner for CI/CD that executes on a separate VM.
 
 We'll also learn how to setup CI/CD variables and secrets, and how to write a simple CI/CD job, using a `.gitlab-ci.yaml` file, to print information about the runner instance, as well as a couple of variables that we set in via the web UI.
 
