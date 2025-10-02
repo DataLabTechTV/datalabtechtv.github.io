@@ -56,6 +56,18 @@ parent = "Categories"
 pageRef = "categories/devops"
 weight = 43
 
+[[main]]
+name = "Software Engineering"
+parent = "Categories"
+pageRef = "categories/software-engineering"
+weight = 44
+
+[[main]]
+name = "Philosophy of Technology"
+parent = "Categories"
+pageRef = "categories/philosophy-of-technology"
+weight = 45
+
 # -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before
 # the copyright notice. Configure as per the main menu above.
