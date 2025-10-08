@@ -35,7 +35,7 @@ In the future, we would like to also consider software in the following categori
 
 | Category            | Service                                   | Description                                                                                              |
 | ------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Object Storage      | [MinIO](https://www.min.io/)              | S3-compatible object store. Already a part of the [[Layer 1 - Foundation\|foundation]] layer.            |
+| Object Storage      | [MinIO](https://docs.min.io/community/minio-object-store/index.html)              | S3-compatible object store. Already a part of the [[Layer 1 - Foundation\|foundation]] layer.            |
 | Relational Database | [PostgreSQL](https://www.postgresql.org/) | General-purpose relational database to share among all services.                                         |
 | Data Lakehouse      | [DuckLake](https://ducklake.select/)      | Data Lakehouse solution (runs on top of MinIO and PostgreSQL, without any additional services required). |
 
