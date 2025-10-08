@@ -462,6 +462,50 @@ services_deploy:
 
 As you can see, we use the `docker` image instead of the default `ubuntu` runner, setting `DOCKER_HOST` to the `docker-shared` context, directly using its hostname and port. The `rules` are set so that this job only activate on `push` and if there are changes to the corresponding files. This assumes that the CI/CD variables are already available within the GitLab project.
 
+#### Compose Project Details
+
+Our Docker Compose Project has 7 services and an additional 3 init services, that run only once (we set them to `restart: no`).
+
+In order to ensure `datalab` remains backward compatible in the sense that we can still run the whole stack on a local Docker instance, we include `minio` as a service, under an optional `dev` project. MinIO is not a part of the data stack running on layer 3, since we already run it on layer 1, however we keep this as a convenience for quickly spinning up the `datalab` stack locally.
+
+Apart from `minio`, we also provide `postgres`, with an admin user `root`, `ollama`, `open-webui`, `mlflow` running on a SQLite backend and a MinIO bucket for artifact storage, `kafka` as a single node without replication, running one broker and controller, and `portainer` to help monitor our Docker instances.
+
+The provided `*-init` services produce a container that runs only once for initializations: `minio-init` creates default buckets, `ollama-init` pulls default models, and `kafka-init` creates topics and initializes consumers for topics/groups.
+
+In general, each service has its own network and volume, with init services sharing the same network as their corresponding parent services. All init services depend on their parent services being on a healthy status, so that we can run commands on them. For example, for `ollama-init` we set:
+
+```yaml
+depends_on:
+  ollama:
+	condition: service_healthy
+```
+
+Implementing health checks on the parent services was mostly constrained by the available tools within the specific base image used for each service (e.g., `curl` wasn't necessarily available). Here are is a summary of the health check commands that we used:
+
+| Service    | Health Check                                                                         |
+| ---------- | ------------------------------------------------------------------------------------ |
+| `minio`    | `curl -f http://localhost:9000/minio/health/live`                                    |
+| `postgres` | `pg_isready`                                                                         |
+| `ollama`   | `ollama ls`                                                                          |
+| `mlflow`   | `python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000')"` |
+| `kafka`    | `/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list`               |
+
+The configuration for each service is heavily dependent on environment variables defined within a `.env` file on the root of the project, as we don't deploy any secrets management service, like HashiCorp Vault.
+
+The `open-webui` service also runs on the `ollama` network, and the `ollama` service requires GPU support, which was defined as follows:
+
+```yaml
+deploy:
+  resources:
+	reservations:
+	  devices:
+		- driver: nvidia
+		  count: all
+		  capabilities: [gpu]
+```
+
+Finally, `portainer` porta 9000 was remapped to 9080, so it wouldn't collide with `minio`. We opted to change the port for Portainer rather than MinIO, since this is a secondary service used only for monitoring, and it doesn't require any configs on `datalab`.
+
 #### PostgreSQL Databases
 
 Under [.ci/postgres.yml](https://github.com/DataLabTechTV/datalab/blob/1bab0dcd246a5d63221910310dd382b081c4add2/.ci/postgres.yml), we provide a workflow to provision a PostgreSQL database and credentials, which will be used by our applications from Layer 4 (see upcoming blog post and video).
