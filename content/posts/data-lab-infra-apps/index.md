@@ -54,10 +54,10 @@ The first attempt to push a large image into our container registry failed. This
 
 ```ruby
 registry['storage'] = {
-	's3_v2' => {
-	  ...
-	  'checksum_disabled' => true,
-	}
+  's3_v2' => {
+    ...
+    'checksum_disabled' => true,
+  }
 }
 ```
 
@@ -179,10 +179,10 @@ First, we trigger the pipeline, obtaining it's run ID:
 echo "Triggering downstream pipeline"
 
 PIPELINE_ID=$(curl -s -X POST \
-	--form token=$GITLAB_TRIGGER_TOKEN \
-	--form ref=infra \
-	--form inputs[ollama_pull]=$PULL \
-	$CI_API_V4_URL/projects/$PROVISIONER_ID/trigger/pipeline | jq -r '.id')
+  --form token=$GITLAB_TRIGGER_TOKEN \
+  --form ref=infra \
+  --form inputs[ollama_pull]=$PULL \
+  $CI_API_V4_URL/projects/$PROVISIONER_ID/trigger/pipeline | jq -r '.id')
 
 echo "Triggered pipeline $PIPELINE_ID"
 ```
@@ -193,15 +193,15 @@ We then poll the API every 10 seconds to check if the pipeline has finished:
 
 ```bash
 while true; do
-	STATUS=$(curl -s -H "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-		$CI_API_V4_URL/projects/$PROVISIONER_ID/pipelines/$PIPELINE_ID \
-		| jq -r '.status')
+  STATUS=$(curl -s -H "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+    $CI_API_V4_URL/projects/$PROVISIONER_ID/pipelines/$PIPELINE_ID \
+    | jq -r '.status')
 
-	echo "Pipeline status: $STATUS"
+  echo "Pipeline status: $STATUS"
 
-	[[ "$STATUS" == "success" || "$STATUS" == "failed" ]] && break
+  [[ "$STATUS" == "success" || "$STATUS" == "failed" ]] && break
 
-	sleep 10
+  sleep 10
 done
 ```
 
