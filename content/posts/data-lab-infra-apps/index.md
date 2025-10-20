@@ -1,6 +1,6 @@
 ---
 title: "Data Lab Infra - Part 5: Retrospective & MLOps - Model Deployment"
-description: Learn how to
+description: Learn how to use multi-project CI/CD with the GitLab Free tier, how to deploy an ML model with Docker, doing a retrospective and redesigning the architecture.
 date: 2025-10-21T12:00:00+0100
 categories: ["DevOps", "MLOps"]
 tags: ["homelab", "applications", "gitlab", "docker", "ci-cd", "postgres", "kafka", "mlflow", "ollama", "architecture", "retrospective", "video"]
@@ -8,7 +8,7 @@ tags: ["homelab", "applications", "gitlab", "docker", "ci-cd", "postgres", "kafk
 
 ## Summary
 
-On part 5 of this series, you'll learn how to
+On part 5 of this series, you'll learn how to use multi-project CI/CD with the GitLab Free tier, in order to provision resources like PostgreSQL databases and credentials. You'll also learn how easy it is to deploy your ML model with Docker, once you have the correct infrastructure setup. And, finally, we'll look back at the pros and cons of the implemented architecture, doing a full retrospective, and proposing a redesigned architecture to fix the pitfalls of our current design.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
