@@ -12,7 +12,7 @@ Learn how to migrate your existing DuckLake catalog from SQLite to PostgreSQL, w
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/TBD"
+		src="https://www.youtube.com/embed/r-iV5S8CHPQ?si=0bg7GAVhok9_sMBu"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
