@@ -1,14 +1,18 @@
 ---
 title: "LabStore - Part 1 - Building an Object Store in Go: How Hard Can It Be?"
-description: Learn how to...
+description: Let's learn all about the inner workings of S3 object stores, along with enough Go to start building your own solution.
 date: 2025-11-11T12:00:00+0100
 categories: [Software Engineering]
-tags: [object-store, s3, go, video]
+tags: [s3, golang, object-store, aws, video]
 ---
 
 ## Summary
 
-Learn how to...
+Let's learn all about the inner workings of S3 object stores, along with enough Go to start building your own solution.
+
+As MinIO distances itself from Open Source Software, losing karma with the community, there's no better time to discover more on how to build our very own S3-compatible object store! So let's delve into the inner workings of the AWS S3 Object Store API, learning the basics of Go, and introducing LabStore, a new project by IllumiKnowLabs, where, together with the community, we'll build yet another OSS solution for object storage, this time ensuring that it remains open and free—no features removed!
+
+Embark in this series with IllumiKnowLabs, and let's see where this journey takes us. Hopefully you'll learn a lot along the way!
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
