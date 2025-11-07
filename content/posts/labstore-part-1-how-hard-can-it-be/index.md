@@ -1,7 +1,7 @@
 ---
 title: "LabStore - Part 1 - Building an Object Store in Go: How Hard Can It Be?"
 description: Learn how to...
-date: 2025-10-28T12:00:00+0100
+date: 2025-11-11T12:00:00+0100
 categories: [Software Engineering]
 tags: [object-store, s3, go, video]
 ---
