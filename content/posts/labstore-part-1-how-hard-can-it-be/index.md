@@ -230,17 +230,11 @@ type Responder interface {
 	Log()
 }
 
-type ErrorResponder interface {
-	Responder
-}
-
 type DataResponder interface {
 	Responder
 	Data() any
 }
 ```
-
-With these interface declarations, we can implement `Body()` and `Log()` globally, and also a specific `Log()` method for `ErrorResponder`, so that it logs using `ERROR` rather than `INFO`, while also including the `ErrorCode` in the log message.
 
 If you're coming from Scala, this is a bit like traits, but without the need for `extends... with...`, which provides a weaker consistency syntax. If you're coming from Python, this is like multiple-inheritance—using mixins—but without initialization dilemmas:
 
