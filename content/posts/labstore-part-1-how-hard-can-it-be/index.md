@@ -3,7 +3,7 @@ title: "LabStore - Part 1 - Building an Object Store in Go: How Hard Can It Be?"
 description: Let's learn all about the inner workings of S3 object stores, along with enough Go to start building your own solution.
 date: 2025-11-11T12:00:00+0100
 categories: [Software Engineering]
-tags: [s3, golang, object-store, aws, video]
+tags: [s3, go, object-store, aws, video]
 ---
 
 ## Summary
