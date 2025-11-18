@@ -10,9 +10,9 @@ tags: [s3, golang, object-store, aws, video]
 
 Let's learn all about the inner workings of S3 object stores, along with enough Go to start building your own solution.
 
-As MinIO distances itself from Open Source Software, losing karma with the community, there's no better time to discover more on how to build our very own S3-compatible object store! So let's delve into the inner workings of the AWS S3 Object Store API, learning the basics of Go, and introducing LabStore, a new project by IllumiKnowLabs, where, together with the community, we'll build yet another OSS solution for object storage, this time ensuring that it remains open and free—no features removed!
+As MinIO distances itself from Open Source Software, losing karma with the community, there's no better time to discover more on how to build our very own S3-compatible object store! So let's delve into the inner workings of the AWS S3 Object Store API, learning the basics of Go, and introducing LabStore, a new project by IllumiKnow Labs, where, together with the community, we'll build yet another OSS solution for object storage, this time ensuring that it remains open and free—no features removed!
 
-Embark in this series with IllumiKnowLabs, and let's see where this journey takes us. Hopefully you'll learn a lot along the way!
+Embark in this series with IllumiKnow Labs, and let's see where this journey takes us. Hopefully you'll learn a lot along the way!
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
@@ -517,7 +517,7 @@ For now, let's take a look at the first steps we've taken to make this work.
 
 ### Project Management on GitHub
 
-Since it's not just me working on this project, I've setup a GitHub Org as neutral territory, where I can collab with a friend who will be working on a web frontend for LabStore. The org is called [IllumiKnowLabs](https://github.com/IllumiKnowLabs), where you can find the repo for [LabStore](https://github.com/IllumiKnowLabs/labstore). It's perhaps too soon to open issues, but feel free to do so—just keep in mind it won't be a priority at this time.
+Since it's not just me working on this project, I've setup a GitHub Org as neutral territory, where I can collab with a friend who will be working on a web frontend for LabStore. The org is called [IllumiKnow Labs](https://github.com/IllumiKnowLabs), where you can find the repo for [LabStore](https://github.com/IllumiKnowLabs/labstore). It's perhaps too soon to open issues, but feel free to do so—just keep in mind it won't be a priority at this time.
 
 If you're curious, we're using GitHub Projects and a Kanban board to manage our issues and workflow. We keep separate release branches for backend and web frontend, with PRs to `main` requiring peer approval.
 
@@ -564,4 +564,4 @@ We're relying on manual testing so far—it is what it is, time and resources ar
 
 ### Final Remarks
 
-And this is it, the beginning of IllumiKnowLabs and LabStore. We hope this will be ground-zero for many learning projects and collaborations, and for some cool tools in the spirit of open source! Drop us a line on our [discussion forum](https://github.com/IllumiKnowLabs/labstore/discussions) for LabStore, if you have something to share, or use the regular [DataLabTechTV](https://datalabtechtv.com/) social channels, and I'll make sure to convey any message to the team.
+And this is it, the beginning of IllumiKnow Labs and LabStore. We hope this will be ground-zero for many learning projects and collaborations, and for some cool tools in the spirit of open source! Drop us a line on our [discussion forum](https://github.com/IllumiKnowLabs/labstore/discussions) for LabStore, if you have something to share, or use the regular [DataLabTechTV](https://datalabtechtv.com/) social channels, and I'll make sure to convey any message to the team.
