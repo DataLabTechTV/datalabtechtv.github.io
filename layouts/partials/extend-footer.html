@@ -20,7 +20,13 @@
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({
         startOnLoad: true,
-        theme: 'base',
+        theme: "base",
+        themeCSS: `
+          /* Left-align text in class diagrams */
+          .nodeLabel {
+            text-wrap: nowrap;
+          }
+        `,
         flowchart: {
             nodeSpacing: 20,
             rankSpacing: 100,
@@ -29,17 +35,18 @@
             fontFamily: 'var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace)',
             fontSize: "1.5em",
 
-            background: '#1e1e1e',
-            textColor: '#f8fafc',
-            primaryColor: '#0ea5e9',
-            primaryTextColor: '#f8fafc',
-            lineColor: '#94a3b8',
+            background: "#1e1e1e",
+            textColor: "#f8fafc",
+            primaryColor: "#0ea5e9",
+            primaryTextColor: "#f8fafc",
+            lineColor: "#94a3b8",
+            noteBkgColor: "#2c3a4a",
 
             /** Flowchart **/
 
-            nodeBorder: '#38bdf8',
-            clusterBkg: '#2c3a4a',
-            clusterBorder: '#4b5563',
+            nodeBorder: "#38bdf8",
+            clusterBkg: "#2c3a4a",
+            clusterBorder: "#4b5563",
 
             /** Git Graph **/
 
