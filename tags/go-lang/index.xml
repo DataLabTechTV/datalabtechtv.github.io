@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go-Lang on Data Lab Tech TV</title>
+    <link>http://localhost:1313/tags/go-lang/</link>
+    <description>Recent content in Go-Lang on Data Lab Tech TV</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© 2025 Data Lab Tech</copyright>
+    <lastBuildDate>Tue, 11 Nov 2025 12:00:00 +0100</lastBuildDate><atom:link href="http://localhost:1313/tags/go-lang/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>LabStore - Part 1 - Building an Object Store in Go: How Hard Can It Be?</title>
+      <link>http://localhost:1313/posts/labstore-part-1-how-hard-can-it-be/</link>
+      <pubDate>Tue, 11 Nov 2025 12:00:00 +0100</pubDate>
+      
+      <guid>http://localhost:1313/posts/labstore-part-1-how-hard-can-it-be/</guid>
+      <description>Let&#39;s learn all about the inner workings of S3 object stores, along with enough Go to start building your own solution.</description>
+      
+    </item>
+    
+  </channel>
+</rss>
