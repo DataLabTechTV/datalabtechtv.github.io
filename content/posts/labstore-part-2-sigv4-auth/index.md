@@ -55,10 +55,25 @@ A canonical request will look like this:
 ```
 
 - `METHOD` (HTTP Verb) – HTTP method (GET, PUT, POST, etc.)
-- `PATH` (Canonical URI) – URL encoded path (i.e. split by `/` and URL encode)
-- `QUERY_STRING` (Canonical Query String) – Single line with query parameters with key and value URL encoded, following the same order as the original request
-- `HEADERS` (Canonical Headers) – lowercase header name and trimmed value, separated by `:`, no spaces, and ending on a `\n`
--  `BODY_HASH` (Hashed Payload) – SHA256 hex string for the body content—notice that there is no `\n` here
+- `PATH` (Canonical URI) – URL encoded path (i.e. split by `/` and URL encoded)
+- `QUERY_STRING` (Canonical Query String) – Single line with query parameters, with URL encoded keys and values, following the same order as the original request
+- `HEADERS` (Canonical Headers) – lowercase header name and trimmed value, separated by `:`, no spaces, and ending on a `\n`.
+- `SIGNED_HEADERS` (Signed Headers) – list of header names used in signing, separated by `;`
+-  `BODY_HASH` (Hashed Payload) – SHA256 hex string for the body content—notice that there is no `\n` here—or `UNSIGNED-PAYLOAD` or `STREAMING-AWS4-HMAC-SHA256-PAYLOAD`
+
+For example:
+
+```
+PUT
+/bucket/my/path/filename%282%29.txt
+key1=value1&key2=value2
+x-amz-content-sha256:STREAMING-AWS4-HMAC-SHA256-PAYLOAD
+x-amz-date:20251119T103929Z
+x-amz-decoded-content-length:10485760
+
+host;x-amz-content-sha256;x-amz-date;x-amz-decoded-content-length
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+```
 
 #### StringToSign
 
@@ -73,8 +88,17 @@ AWS4-HMAC-SHA256\n
 
 - `"AWS4-HMAC-SHA256"` – used to specify the HMAC hashing algorithm (SHA256)
 - `ISO8601_TIMESTAMP` – timestamp from the original request—here, you might validate the timestamp to make sure that it matches up to the day, hour or minute, but we don't (we simply reuse the one from the request)
-- `SCOPE` – date, region and service identifier string in the format `<YYMMDD>/<REGION>/<SERVICE>/aws4_request` (e.g., `20251118/eu-west-1/s3/aws4_request`)
+- `SCOPE` – date, region and service identifier string in the format `<YYMMDD>/<REGION>/<SERVICE>/aws4_request`
 - `CANONICAL_REQUEST_SHA256` – SHA256 hex string for the canonical request string—notice that there is no `\n` here
+
+For example:
+
+```
+AWS4-HMAC-SHA256
+20251119T103928Z
+20251118/eu-west-1/s3/aws4_request
+7c7b924298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+```
 
 #### Signature
 
@@ -85,15 +109,15 @@ The final signature is the calculated using HMAC-SHA256 based on:
 - Scope region (e.g., `eu-west-1`)
 - Scope service (usually `s3`)
 - Scope request type (`aws4_request`)
+- String to sign (`STRING_TO_SIGN`)
 
-Directly from the docs, this is how the chain of hashes is computed using `HMAC-SHA256(key, value):
+Directly from the docs, this is how the chain of hashes is computed using `HMAC-SHA256(key, value)`:
 
 ```
 DateKey = HMAC-SHA256("AWS4<SECRET_KEY>", "<SCOPE_DATE>")
 DateRegionKey = HMAC-SHA256(DateKey, "<SCOPE_REGION>")
 DateRegionServiceKey = HMAC-SHA256(DateRegionKey, "<SCOPE_SERVICE>")
 SigningKey = HMAC-SHA256(DateRegionServiceKey, "aws4_request")
-
 Signature = HMAC-SHA256(SigningKey, "<STRING_TO_SIGN>")
 ```
 
@@ -131,10 +155,23 @@ AWS4-HMAC-SHA256-PAYLOAD\n
 
 - `"AWS4-HMAC-SHA256-PAYLOAD"` – used to specify the HMAC hashing algorithm (SHA256) for a chunk (notice the `PAYLOAD` suffix)
 - `ISO8601_TIMESTAMP` – timestamp from the original request—here, you might validate the timestamp to make sure that it matches up to the day, hour or minute, but we don't (we simply reuse the one from the request)
-- `SCOPE` – date, region and service identifier string in the format `<YYMMDD>/<REGION>/<SERVICE>/aws4_request` (e.g., `20251118/eu-west-1/s3/aws4_request`)
+- `SCOPE` – date, region and service identifier string in the format `<YYMMDD>/<REGION>/<SERVICE>/aws4_request`
 - `PREVIOUS_SIGNATURE` – signature for the previous chunk, or the seed signature from the standard SigV4 signature (first one computed, like for any other request)
 - `EMPTY_STRING_SHA256` – SHA256 for an empty string (don't ask me why)
-- `CHUNK_DATA_SHA256` – SHA256 for the chunk data
+- `CHUNK_DATA_SHA256` – SHA256 for the chunk data—notice that there is no `\n` here
+
+For example:
+
+For example:
+
+```txt
+AWS4-HMAC-SHA256-PAYLOAD
+20251119T103928Z
+20251118/eu-west-1/s3/aws4_request
+3f256085d50823c4971f2aaa1be1816e9fa5c948352bbbbc81762dd0f84cc237
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+6480a50b3148fb7b68bf1c3bfdf616a507cf44cf536cdda6e47f0b4c5cb22876
+```
 
 Client-side, don't forget to add a zero-size chunk to mark the end of the stream. Likewise, server-side, we must look for a chunk header with size zero, so that we know the stream is over.
 
