@@ -326,7 +326,7 @@ We use the following environment variables:
 
 ### Benchmarking with Warp
 
-Benchmarking was implemented using [warp](https://github.com/minio/warp), by MinIO, and results analyzed using [DuckDB](https://duckdb.org/), with everything orchestrated using [just](https://just.systems/). We created a top-level project under `benchmark/` inside our [LabStore](https://github.com/IllumiKnowLabs/labstore) monorepo (see the `release/backend/v0.1.0` branch, if unreleased).
+Benchmarking was implemented using [warp](https://github.com/minio/warp), by MinIO, and results analyzed using [DuckDB](https://duckdb.org/), with everything orchestrated using [just](https://just.systems/). We created a top-level project under `benchmark/` inside our [LabStore](https://github.com/IllumiKnowLabs/labstore) monorepo (see the `release/backend/v0.1.0` branch, if unreleased). All infrastructure was deployed on a remote Docker host running inside a Proxmox VM with 2 vCPUs, 10 GiB of RAM, and 1 Gbps Ethernet.
 
 #### Just Commands
 
