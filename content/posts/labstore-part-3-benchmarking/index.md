@@ -106,28 +106,24 @@ benchmark-labstore:
     context: ..
     dockerfile: infra/Dockerfile.backend
   ports:
-    - ${BENCHMARK_LABSTORE_PORT:-7789}:${LABSTORE_SERVER_PORT}
+    - ${BENCHMARK_LABSTORE_PORT:-7789}:6789
   networks:
     - benchmark
   volumes:
     - benchmark-labstore:/data
   environment:
-    - LABSTORE_SERVER_HOST=${LABSTORE_SERVER_HOST}
-    - LABSTORE_SERVER_PORT=${LABSTORE_SERVER_PORT}
-    - LABSTORE_SERVER_ADMIN_ACCESS_KEY=${LABSTORE_SERVER_ADMIN_ACCESS_KEY}
-    - LABSTORE_SERVER_ADMIN_SECRET_KEY=${LABSTORE_SERVER_ADMIN_SECRET_KEY}
-  command: serve --storage-path /data
+    - LABSTORE_SERVER_ADMIN_ACCESS_KEY=${BENCHMARK_STORE_ACCESS_KEY}
+    - LABSTORE_SERVER_ADMIN_SECRET_KEY=${BENCHMARK_STORE_SECRET_KEY}
+  command: serve --host 0.0.0.0 --port 6789 --storage-path /data
   restart: unless-stopped
-```
+  ```
 
 We use the following environment variables:
 
 - `BENCHMARK_LABSTORE_PORT`, which defaults to `6789`, but can be set to overwrite this.
-- `LABSTORE_SERVER_HOST` should be set to a valid Docker network IP (i.e., not `localhost`), otherwise it won't be properly exposed (`0.0.0.0` is fine here).
-- `LABSTORE_SERVER_PORT` sets the default exposed port, as well as the internal port for LabStore Server.
-- `LABSTORE_SERVER_ADMIN_ACCESS_KEY` and `LABSTORE_SERVER_ADMIN_SECRET_KEY` set the user and password for admin.
+- `BENCHMARK_STORE_ACCESS_KEY` and `BENCHMARK_STORE_SECRET_KEY` to set the user and password for admin.
 
-Note that `LABSTORE_SERVER_STORAGE_PATH`, despite being available in our config, this is ignored for the Docker service, defaulting to `/data`, as set by `--storage-path`, and being exposed as a mountable volume instead.
+Note that `LABSTORE_SERVER_STORAGE_PATH`, despite being available in our config, is ignored for the Docker service, defaulting to `/data`, as set by `--storage-path`, and being exposed as a mountable volume instead. It's the same with `LABSTORE_SERVER_HOST` which is set to `0.0.0.0` so that Docker can expose the service, and `LABSTORE_SERVER_PORT`, which is set to a hardcoded port, since we're exposing it anyway.
 
 #### MinIO
 
