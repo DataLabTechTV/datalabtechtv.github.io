@@ -47,12 +47,12 @@ For LabStore, we only require the backend to be running for our benchmark. We ha
 For building the `labstore-server` binary, we use the Alpine-based `golang` image for the platform where we're building the Go project, given by `BUILDPLATFORM`. We take two arguments, `TARGETOS` and `TARGETACH` with the target operating system and architecture to build the binary for. We copy `go.mod` and `go.sum` to the working directory and download all dependencies with `go mod download`. Finally, we copy the code and compile the binary for the target platform.
 
 ```dockerfile
-### =================
-### Go builder
-### =================
+# =================
+# Go builder
+# =================
 
 FROM --platform=$BUILDPLATFORM \
-	golang:1.25-alpine3.22 AS builder
+  golang:1.25-alpine3.22 AS builder
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -65,24 +65,24 @@ RUN go mod download
 COPY backend .
 
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
-	-o bin/labstore-server ./cmd/labstore-server
+  -o bin/labstore-server ./cmd/labstore-server
 ```
 
 On the same `Dockerfile.backend`, we begin a second stage using Alpine, where we copy the binary from the previous `builder` stage. We create the appropriate `labstore` user and group, create a `/data` directory with the required ownership, that we exposed as a volume, switch to user `labstore` and set `labstore-server` as the entry point, making this usable in Docker Compose with any arguments that we'd like to use.
 
 ```dockerfile
-### =================
-### LabStore backend
-### =================
+# =================
+# LabStore backend
+# =================
 
 FROM alpine:3.22
 
 COPY --from=builder \
-	/labstore/backend/bin/labstore-server \
-	/usr/local/bin/labstore-server
+  /labstore/backend/bin/labstore-server \
+  /usr/local/bin/labstore-server
 
 RUN addgroup -S labstore \
-	&& adduser -S labstore -G labstore
+  && adduser -S labstore -G labstore
 
 RUN mkdir /data
 RUN chown -R labstore:labstore /data
@@ -96,63 +96,69 @@ ENTRYPOINT ["labstore-server"]
 
 ##### Service
 
-Then, on our Docker Compose project, defined under `infra/compose.yml`, we build the `infra/Dockerfile.backend` image from the root of the repo, where a `.env` is placed with the required environment variables.
+Then, on our Docker Compose project, defined under `infra/compose.yml`, we build the `infra/Dockerfile.backend` image from the root of the repo, loading the environment variables from the `labstore.yml` config file via `just` and `yq`.
 
 ```yaml
-labstore-backend:
+benchmark-labstore:
+  profiles:
+    - benchmark
   build:
     context: ..
     dockerfile: infra/Dockerfile.backend
   ports:
-    - ${BENCHMARK_LABSTORE_PORT:-$LS_PORT}:${LS_PORT}
-  environment:
-    - LS_STORAGE_ROOT=/data
-    - LS_HOST=${LS_HOST}
-    - LS_PORT=${LS_PORT}
-    - LS_ADMIN_ACCESS_KEY=${LS_ADMIN_ACCESS_KEY}
-    - LS_ADMIN_SECRET_KEY=${LS_ADMIN_SECRET_KEY}
-  volumes:
-    - labstore:/data
+    - ${BENCHMARK_LABSTORE_PORT:-7789}:${LABSTORE_SERVER_PORT}
   networks:
-    - labstore
-  command: serve
+    - benchmark
+  volumes:
+    - benchmark-labstore:/data
+  environment:
+    - LABSTORE_SERVER_HOST=${LABSTORE_SERVER_HOST}
+    - LABSTORE_SERVER_PORT=${LABSTORE_SERVER_PORT}
+    - LABSTORE_SERVER_ADMIN_ACCESS_KEY=${LABSTORE_SERVER_ADMIN_ACCESS_KEY}
+    - LABSTORE_SERVER_ADMIN_SECRET_KEY=${LABSTORE_SERVER_ADMIN_SECRET_KEY}
+  command: serve --storage-path /data
   restart: unless-stopped
 ```
 
 We use the following environment variables:
 
 - `BENCHMARK_LABSTORE_PORT`, which defaults to `6789`, but can be set to overwrite this.
-- `LS_STORAGE_ROOT` is ignored from the `.env`, defaulting to `/data`, and being exposed as a mountable volume instead.
-- `LS_HOST` should be set to a valid Docker network IP (i.e., not `localhost`), otherwise it won't be properly exposed (`0.0.0.0` is fine here).
-- `LS_PORT` sets the default exposed port, as well as the internal port for LabStore Server.
-- `LS_ADMIN_ACCESS_KEY` and `LS_ADMIN_SECRET_KEY` set the user and password for admin.
+- `LABSTORE_SERVER_HOST` should be set to a valid Docker network IP (i.e., not `localhost`), otherwise it won't be properly exposed (`0.0.0.0` is fine here).
+- `LABSTORE_SERVER_PORT` sets the default exposed port, as well as the internal port for LabStore Server.
+- `LABSTORE_SERVER_ADMIN_ACCESS_KEY` and `LABSTORE_SERVER_ADMIN_SECRET_KEY` set the user and password for admin.
+
+Note that `LABSTORE_SERVER_STORAGE_PATH`, despite being available in our config, this is ignored for the Docker service, defaulting to `/data`, as set by `--storage-path`, and being exposed as a mountable volume instead.
 
 #### MinIO
 
 As there are no security dependencies for running a benchmark, we rely on the latest Docker image release for MinIO that was provided as a build by MinIO: `RELEASE.2025-09-07T16-13-09Z`. We use the default port `9000` to expose the S3-compatible API, and exposed the UI port as well, but this is not required for the benchmark.
 
 ```yaml
-bench-minio:
+benchmark-minio:
+  profiles:
+    - benchmark
+    - testing
   image: minio/minio:RELEASE.2025-09-07T16-13-09Z
   ports:
     - ${BENCHMARK_MINIO_PORT:-9000}:9000
     - 9001:9001
+  networks:
+    - benchmark
+    - testing
+  volumes:
+    - benchmark-minio:/data
   environment:
     - MINIO_ROOT_USER=${BENCHMARK_STORE_ACCESS_KEY}
     - MINIO_ROOT_PASSWORD=${BENCHMARK_STORE_SECRET_KEY}
-  volumes:
-    - minio:/data
-  networks:
-    - minio
+  command: server /data --console-address ":9001"
   healthcheck:
     test: [
-		"CMD", "curl", "-f",
-		"http://localhost:9000/minio/health/live"
-	]
+      "CMD", "curl", "-f",
+      "http://localhost:9000/minio/health/live"
+    ]
     interval: 10s
     retries: 5
   restart: unless-stopped
-  command: server /data --console-address ":9001"
 ```
 
 We use the following environment variables:
@@ -209,17 +215,21 @@ COPY infra/garage.toml /etc/garage.toml
 ##### Compose Service
 
 ```yaml
-bench-garage:
+benchmark-garage:
+  profiles:
+    - benchmark
   build:
     context: ..
     dockerfile: infra/Dockerfile.garage
+  networks:
+    - benchmark
   volumes:
-    - garage:/var/lib/garage
+    - benchmark-garage:/var/lib/garage
   ports:
-      - ${BENCHMARK_GARAGE_PORT:-3900}:3900
-      - 3901:3901
-      - 3902:3903
-      - 3903:3903
+    - ${BENCHMARK_GARAGE_PORT:-3900}:3900
+    - 3901:3901
+    - 3902:3903
+    - 3903:3903
   restart: unless-stopped
 ```
 
@@ -275,10 +285,14 @@ Unlike Garage, SeaweedFS offers a single convenience `server` command that takes
 This is how we setup the compose service, which will expose the S3 API on port `8333` (we ignore the remaining ports during benchmarking):
 
 ```yaml
-bench-seaweedfs:
+benchmark-seaweedfs:
+  profiles:
+    - benchmark
   image: chrislusf/seaweedfs:4.00
+  networks:
+    - benchmark
   volumes:
-    - seaweedfs:/data
+    - benchmark-seaweedfs:/data
   ports:
     - 9333:9333
     - 8080:8080
@@ -305,13 +319,17 @@ While using the appropriate CPU flags for optimization is ideal—and, in all fa
 Either way, once this was fixed, we deployed RustFS as follows, exposing port 9000 as 10000 to avoid colliding with MinIO (we ignored the UI port 10001 during benchmarking):
 
 ```yaml
-bench-rustfs:
+benchmark-rustfs:
+  profiles:
+    - benchmark
   image: rustfs/rustfs:1.0.0-alpha.69
-  volumes:
-    - rustfs:/data
   ports:
     - ${BENCHMARK_RUSTFS_PORT:-10000}:9000
     - 10001:9001
+  networks:
+    - benchmark
+  volumes:
+    - benchmark-rustfs:/data
   environment:
     - RUSTFS_ACCESS_KEY=${BENCHMARK_STORE_ACCESS_KEY}
     - RUSTFS_SECRET_KEY=${BENCHMARK_STORE_SECRET_KEY}
@@ -330,7 +348,7 @@ Benchmarking was implemented using [warp](https://github.com/minio/warp), by Min
 
 #### Just Commands
 
-In order to run the benchmark process, we first need to ensure we have deployed the required infrastructure using Docker, by running `just infra up` from the root of the repo. This will provision the Docker Compose services described in the previous sections.
+In order to run the benchmark process, we first need to ensure we have deployed the required infrastructure using Docker, by running `just infra benchmark-up` from the root of the repo. This will provision the Docker Compose services described in the previous sections.
 
 Then, from the root of the repo, running `just benchmark all` will trigger the benchmark process. This will measure the available bandwidth using `iperf3`, via the `bandwidth` command, and then run the benchmark for LabStore, MinIO, Garage, SeaweedFS, and RustFS, in this order, via the `stores` command. Both `bandwidth` and `stores` will produce several JSON output files that we then process using DuckDB via the `analysis` command. The output will be the ranking tables for `DELETE`, `GET`, `PUT`, and `STAT` requests, as we run `warp` in `mixed` mode, followed by a `termgraph` plot, both based on the median objects per second, processed for each request.
 
