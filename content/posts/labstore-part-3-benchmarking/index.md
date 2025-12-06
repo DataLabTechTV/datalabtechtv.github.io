@@ -1,5 +1,5 @@
 ---
-title: "LabStore - Part 3 - Building an Object Store in Go: Benchmarking"
+title: "LabStore - Part 3 - Building an Object Store in Go: Benchmarking and Profiling"
 description: Benchmarking S3-compatible object stores—LabStore, MinIO, Garage, SeaweedFS, RustFS—and setting up a Go profiling to detect bottlenecks.
 date: 2025-12-09T12:00:00+0100
 categories: [Software Engineering]
@@ -14,7 +14,7 @@ Follow this series with IllumiKnow Labs, and let's see where this journey takes 
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
 	<iframe
-		src="https://www.youtube.com/embed/TBD"
+		src="https://www.youtube.com/embed/1KK4ibyqG2s"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 		referrerpolicy="strict-origin-when-cross-origin"
