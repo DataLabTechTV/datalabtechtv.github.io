@@ -1,6 +1,6 @@
 ---
 title: "LabStore - Part 4 - Building an Object Store in Go: IAM - Identity and Access Management"
-description: Building an IAM service on top of SQLite in Go.
+description: Building an IAM service on top of SQLite in Go, from config handling to proper secret encryption.
 date: 2025-12-23T12:00:00+0100
 categories: [Software Engineering]
 tags: [iam, s3, go, object-store, aws, authentication, video]
@@ -8,7 +8,7 @@ tags: [iam, s3, go, object-store, aws, authentication, video]
 
 ## Summary
 
-Learn how to building an IAM service on top of SQLite in Go.
+Learn how to build an IAM service on top of SQLite in Go, from config handling to proper secret encryption. We'll cover the required actions to implement an MVP, and SQLite pragmas and patterns to ensure performance. You'll learn how to design the database schema for IAM, and how to implement SQLite CRUD in Go, with concurrency, using buffered channels. We'll also touch on symmetric encryption, based on 256-bit AES-GCM, for secure secret storage, and describe our approach to organizing business logic and HTTP handlers, while also touching on interesting JSON marshaling details that arose during development.
 
 Follow this series with IllumiKnow Labs, and let's see where this journey takes us. Hopefully you'll learn a lot along the way!
 
