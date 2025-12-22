@@ -444,7 +444,7 @@ func (store *Store) sqlExecContext(
 }
 ```
 
-### Security
+### Security and Encryption
 
 We need access to the plain text secret key to compute the [SigV4](https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html) authorization header:
 
