@@ -778,6 +778,8 @@ This will render to something like this:
 
 We also implemented a progress bar in order to track uploads (`PutObject`) and downloads (`GetObject`). This was based on the [progress-animated](https://github.com/charmbracelet/bubbletea/tree/f9233d51192293dadda7184a4de347738606c328/examples/progress-animated) example straight from the `bubbletea` repo, with an optional console output component, to divert the logger to, while `bubbletea` takes over the CLI.
 
+![LabStore Progress Bar](./labstore-progress-bar.png)
+
 Since we do not have an actual TUI, and we do not relinquish control to `bubbletea` completely (i.e., the main program loop is not exclusively running a `tea.Program`), we needed to take extra care in designing our architecture.
 
 In order to display a `bubbletea` component, we must first define a type that implements the `tea.Model` interface, providing `Init()`, `Update()`, and `View()` methods.
