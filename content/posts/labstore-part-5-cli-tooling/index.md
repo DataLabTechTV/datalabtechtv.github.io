@@ -306,7 +306,7 @@ var cmd = &cobra.Command{
 	Short: fmt.Sprintf("%s, by %s", constants.Name,
 		constants.Author),
 	Long:  fmt.Sprintf("%s - %s, by %s", constants.Name,
-		constants.Description,constants.Author),
+		constants.Description, constants.Author),
 
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		baseCmd := topLevelCommand(cmd)
@@ -330,7 +330,11 @@ var cmd = &cobra.Command{
 }
 ```
 
-Here, `Use` will represent the command name (`labstore` for the root command, same as the binary name). For subcommands, `Use` can also contain the expected positional arguments, e.g. `labstore iam users create` requires a `USERNAME`:
+Here, `Use` will represent the command name (`labstore` for the root command, same as the binary name).
+
+### Positional Arguments
+
+For subcommands, `Use` can also contain the expected positional arguments, e.g. `labstore iam users create` requires a `USERNAME`:
 
 ```go
 func NewUsersCreateCmd() *cobra.Command {
@@ -352,6 +356,8 @@ Notice that `Args` is set to `cobra.MinimumNArgs(1)`, to ensure `USERNAME` will 
 
 We also set a `Short` description, displayed when listing commands, and we can set an optional `Long` description, if we want to display further details when showing the help for that specific command.
 
+### Run Hooks
+
 Then, we can make use of several run methods:
 
 - `PersistentPreRun` / `PersistentPreRunE`
@@ -363,6 +369,39 @@ Then, we can make use of several run methods:
 For the persistent variants, depending on whether `cobra.EnableTraverseRunHooks` is `true` or `false`, we'll get different behaviors. For `true`, persistent hooks will trigger in-order from outer to inner level (pre) or from inner to outer level (post). For `false`, the inner-most definition will take precedence.
 
 For the `E` suffix variants, our function must return `error`. This is automatically handled by Cobra, although, like we stated above,  we have disabled this default behavior and handled this ourselves.
+
+### Annotations
+
+We can also find a few annotation checks. Each command can store a `map[string]string` containing app-specific metadata to help handle the flow. For example, our `serve` command is configured as follows, with the `show-default-secret` annotation:
+
+```go
+var cmd = &cobra.Command{
+	Use:   "serve",
+	Short: "Run server",
+	Long:  "Run server for S3, IAM, and admin services",
+	Run: func(cmd *cobra.Command, args []string) {
+		adminPass := cmd.Flags().Lookup("admin-pass")
+		if adminPass != nil && adminPass.Changed {
+			slog.Warn("setting admin pass via the command line is insecure")
+		}
+
+		router.Start()
+	},
+	Annotations: map[string]string{
+		"show-default-secret": "yes",
+	},
+}
+```
+
+This annotation is then handled on our root command as follows, determining whether to display a default admin secret key, when it hasn't been specified by the user elsewhere on the config (this will be handled internally by the `config` package):
+
+```go
+if cmd.Annotations["show-default-secret"] == "yes" {
+	config.DisplayDefaultAdminSecretKey = true
+}
+```
+
+### Flags and Subcommands
 
 Once the `cmd` is instanced in the `NewRootCmd()` constructor, then we can add flags or persistent flags (i.e., common to all subcommands), as well the subcommands—each subcommand has a similar constructor:
 
@@ -382,6 +421,8 @@ cmd.AddCommand(NewAdminCmd())
 cmd.AddCommand(NewTUICmd())
 AddDaemonCommands(cmd)
 ```
+
+### Help Message
 
 This is what running the `labstore` command without any options will print:
 
@@ -414,7 +455,7 @@ Flags:
 Use "labstore [command] --help" for more information about a command.
 ```
 
-Here's a semantically organized listing of the supported commands:
+Here's a semantically organized listing of the supported commands as well—it would be nice to be able to group like this in Cobra, without having to create subcommands, for improved readability, like `just` does:
 
 - **Server**
 	- `server` – used to start the services for the LabStore server (admin, S3, IAM, and web UI).
@@ -432,13 +473,15 @@ Here's a semantically organized listing of the supported commands:
 	- `completion` – automatic shell completion scripts provided by Cobra (supports bash, zsh, fish, and PowerShell).
 	- `help` – go-style help and usage messages.
 
-In the future, if you `go install` LabStore, you'll be able to run, for example for fish (from your `~/.config/fish/config.fish`):
+### Shell Autocompletion
+
+In the future, after you `go install` LabStore, you'll also be able to setup autocompletion for your shell. For example, for fish, you just add this to your `~/.config/fish/config.fish`:
 
 ```fish
 labstore completion fish | source -
 ```
 
-And this will provide autocompletion to the `labstore` CLI.
+With `cobra`, you get autocompletion for your CLI, out-of-the-box, at a zero-cost.
 
 ## Managing Multiple HTTP Services
 
