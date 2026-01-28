@@ -2,6 +2,7 @@
 title: "LabStore - Part 5 - Building an Object Store in Go: CLI - Command Line Interface"
 description: Learn how to build a CLI for your monorepo, with cobra and the charm stack.
 date: 2026-01-27T12:00:00+0100
+lastmod: 2026-01-28T08:15:00+0100
 categories: [Software Engineering]
 tags: [iam, s3, go, object-store, aws, cli, client, video]
 ---
@@ -33,22 +34,21 @@ In this blog post, we describe our approach to accommodating the CLI for LabStor
 - Basics of Cobra for CLI design;
 - How to cleanly manage multiple HTTP services in a single `serve` command;
 - How generics and type constraints helped simplify a few CLI display tasks;
-- Mistakes to avoid when designing a configuration management component;
 - The new `credentials.yaml` file, meant for direct user editing;
 - A light introduction to TUI design, focusing on styling and the progress bar component;
-- File embedding in Go, and how to serve a web UI as a static site,  directly from Go, via `http.FileServer`.
+- File embedding in Go, and how to serve a web UI as a static site, directly from Go, via `http.FileServer`.
 
 ## Changes to the Codebase
 
 ### Centralizing Commands
 
-We started from two main Go projects, `backend` and `cli`, we well as a secondary `shared` directory to drop any additional subprojects, required throughout our monorepo. Our `backend` project provided its own `cmd/labstore-server` implemented in Cobra, but it quickly became clear that this should be centralized in `cli`. Initially, we were considering importing `cmd/labstore-server/serve.go` directly from `cli`, but this would essentially make the `labstore-server` binary irrelevant, so we opted to move all commands into `cli`.
+We started from two main Go projects, `backend` and `cli`, we well as a secondary `shared` directory to drop any additional subprojects, required by other projects in our monorepo. Our `backend` project already provided its own `cmd/labstore-server` implemented in Cobra, but it quickly became clear that this should be centralized in `cli`. Initially, we were considering importing `cmd/labstore-server/serve.go` directly from `cli`, but this would essentially make the `labstore-server` binary irrelevant, so we opted to move all commands into `cli`.
 
-We dropped `backend/cmd/labstore-server` and consolidated its commands into `cli/cmd/labstore` instead, thus turning `backend` into a library, which we renamed as `server`, for clarity.
+We dropped `backend/cmd/labstore-server` and consolidated its commands into `cli/cmd/labstore` instead, thus turning `backend` into a library, which we renamed to `server`, for clarity.
 
-We also started a new `client` project, as a library to handle S3 and IAM requests. At first, we dropped it into `shared/client`, but we quickly realized this should be a top-level project, so it now lives in the root of the repo as `client`.
+We also started a new `client` project, a library to handle S3 and IAM requests. At first, we dropped it into `shared/client`, but we quickly realized this should be a top-level project, so it now lives in the root of the repo as `client`.
 
-Finally, because we had to reuse a lot of code from `server` (or, previously, `backend`), we ended up having to refactor quite a lot of code, so that this could be exposed under `server/pkg`. This included types and errors, as well as most of the authentication logic and other common components, like logging or helpers. In the future, we'll most likely refactor some of these into subprojects under `shared`, as well as split the `helpers` into semantically clearer packages.
+Finally, because we had to reuse a lot of code from `server` (or, previously, `backend`), we ended up having to do some refactoring, so that this could be exposed under `server/pkg`. This included types and errors, as well as most of the authentication logic and other common components, like logging or helpers. In the future, we'll most likely refactor some of these into subprojects, under `shared`, as well as split the `helpers` into semantically clearer packages.
 
 For now, this is what we expose from `server`:
 
@@ -69,7 +69,7 @@ server/pkg/
 
 ### Using `go work` for Development
 
-Our individual projects—`server`, `client`, and `cli`—all have their own `go.mod`—we don't use a common `go.mod` at the repo root. Regardless, we also do not release each project individually. This is perhaps adding needless complexity,  and something to revise later. Regardless, we needed a way for projects to import from each other.
+Our individual projects—`server`, `client`, and `cli`—all have their own `go.mod`—but we don't use a common `go.mod` at the repo root, and we also do not release each project individually. This is perhaps adding needless complexity, and something to revise later. Regardless, we needed a way for projects to import from each other.
 
 The legacy approach was to use `replace` inside each `go.mod` file, like so:
 
@@ -85,7 +85,7 @@ require (
 replace github.com/IllumiKnowLabs/labstore/server => ../server
 ```
 
-However, there is a cleaner, more modern approach, with `go.work`. In the repo root, run:
+However, there is a cleaner, more modern approach, using `go.work`. In the repo root, run:
 
 ```bash
 go work init ./server ./client ./cli
@@ -105,7 +105,7 @@ Running `go work sync` will produce a `go.work.sum`, ensuring that workspace dep
 
 #### Linting with Pre-Commit
 
-Since we moved to a monorepo with cross-project dependencies, we also had to update our CI workflows, making sure that our GitHub Actions for linting and testing work as expected.
+Since we moved to a monorepo with cross-project dependencies, we also had to update our CI workflows, making sure that our GitHub Actions for linting and testing still worked as expected.
 
 Since we now have three projects for linting, we updated our `.pre-commit-config.yaml` as follows:
 
@@ -116,22 +116,25 @@ repos:
     hooks:
       - id: golangci-lint
         name: golangci-lint (server)
+		files: ^server/
         entry: bash -c 'golangci-lint run ./server/...'
         language: system
         pass_filenames: false
       - id: golangci-lint
         name: golangci-lint (client)
+		files: ^client/
         entry: bash -c 'golangci-lint run ./client/...'
         language: system
         pass_filenames: false
       - id: golangci-lint
         name: golangci-lint (cli)
+		files: ^cli/
         entry: bash -c 'golangci-lint run ./cli/...'
         language: system
         pass_filenames: false
 ```
 
-We now have three similar `golangci-lint` entries (one per project), where we dropped `types: [go]`, replacing it with `pass_filenames: false`, so that we can explicitly pass the file arguments to the linter. Here, we simply use the same prefix as the one defined for `go.work`. For example, `./server/...` will cover all Go files under the `server` project.
+We use three similar `golangci-lint` entries (one per project), where we dropped `types: [go]`, replacing it with `pass_filenames: false`, as we explicitly pass the file arguments to the linter. Here, we simply use the same prefixes as the ones defined for `go.work`. For example, `./server/...` will cover all Go files under the `server` project.
 
 If we, instead, tried to use a single entry with `./...`, then we would get the following error:
 
@@ -146,7 +149,7 @@ When using `go.work`, make sure that linting is done for each individual module 
 
 We defined two workflows, one for linting, where we call `pre-commit`, and another one for testing, where we call `go test -v` for each module.
 
-Both `lint.yml` and `test.yml`, which exist under `.github/workflows`, call a common composite action defined under `.github/actions/setup`, which will setup go and node, and build the web project, copying `web/build` to `server/pkg/router/assets`, where it lives to be embedded during `server` building.
+Both `lint.yml` and `test.yml`, which exist under `.github/workflows`, call a common composite action defined under `.github/actions/setup`, which will setup `go` and `node`, and build the `web` project, copying `web/build` to `server/pkg/router/assets`, where it lives, to be embedded during `server` building.
 
 This is how the `jobs` entry for `lint.yml` looks like:
 
@@ -200,7 +203,7 @@ In here, we have to make sure we reference the modules defined in `go.work`, so 
 
 #### Makefile
 
-Finally, we had to adapt our `Makefile` to make sure our `cli` project was the only Go project being built, and that it depended on `web`. We also had to sync the static site files built for `web` with the assets directory on our `server` module.
+Finally, we had to adapt our `Makefile` to make sure our `cli` project was the only Go project being built, and that it depended on `web`. We also had to sync the static site files built for `web` with the `assets` directory on our `server` module.
 
 These are the relevant targets to achieve what we just described:
 
@@ -233,13 +236,13 @@ web: $(WEB_BUILD_DIR)
 build: cli
 ```
 
-Running `make` will result in the targets `web`, `assets`, and `cli` being run, building the node project, rsyncing the output to the assets directory under `server`, and building `cli/cmd/labstore` .
+Running `make` will result in the targets `web`, `assets`, and `cli` being run, building the node project, rsyncing the output to the `assets` directory under `server`, and building `cli/cmd/labstore` .
 
 ## Using Cobra to Produce Commands
 
-The entry point for the [spf13/cobra](https://github.com/spf13/cobra) library is a root command. Commands can receive a context, and handle return `error`. We take advantage of both options. This how our `main` package looks like under `cli/cmd/labstore`.
+The entry point for the [Cobra](https://github.com/spf13/cobra) library is a root command. Commands can receive a context, and handle a return `error`. We take advantage of both options. This how our `main` package looks like under `cli/cmd/labstore`.
 
-First, we enable the option to run all persistent pre-run and post-run from parents:
+First, we enable the option to run all persistent pre-run and post-run from parents, as opposed to simply overriding them:
 
 ```go
 func init() {
@@ -247,9 +250,9 @@ func init() {
 }
 ```
 
-This means that anything defined on a persistent pre-run will be run downstream as well.
+This means that anything defined on a persistent pre-run will always be run downstream.
 
-Then, we create a root command using our own `NewRootCmd()`, and pass it a context that captures interrupt signals. This will help us control user interruptions, i.e.,  `Ctrl+C` or `SIGINT`:
+Then, we create a root command using our own `NewRootCmd()`, and pass it a context that captures interrupt signals. This will help us control user interruptions, i.e., `ctrl+c` or `SIGINT`:
 
 ```go
 func main() {
@@ -267,14 +270,14 @@ func main() {
 }
 ```
 
-We handle errors manually, since set the following options for the root command:
+We handle errors manually, so we set the following options for the root command:
 
 ```go
 cmd.SilenceErrors = true
 cmd.SilenceUsage = true
 ```
 
-Instead, we detect `errs.RuntimeError`, which we use to signal that an error has already been handled upstream, and only print the error and usage for any other errors:
+We then detect `errs.RuntimeError`, which we use to signal that an error has already been handled upstream, and only print the error and usage for any other errors (default behavior):
 
 ```go
 func main() {
@@ -366,9 +369,9 @@ Then, we can make use of several run methods:
 - `PostRun` / `PostRunE`
 - `PersistentPostRun` / `PersistentPostRunE`
 
-For the persistent variants, depending on whether `cobra.EnableTraverseRunHooks` is `true` or `false`, we'll get different behaviors. For `true`, persistent hooks will trigger in-order from outer to inner level (pre) or from inner to outer level (post). For `false`, the inner-most definition will take precedence.
+For the persistent variants, depending on whether `cobra.EnableTraverseRunHooks` is `true` or `false`, we'll get different behaviors. For `true`, persistent hooks will trigger in-order from outer to inner level (pre) or from inner to outer level (post). For `false`, the inner-most definition will take precedence, in overridable fashion.
 
-For the `E` suffix variants, our function must return `error`. This is automatically handled by Cobra, although, like we stated above,  we have disabled this default behavior and handled this ourselves.
+For the `E` suffix variants, our function must return `error`. This is automatically handled by Cobra, although, like we stated above, we disabled this default behavior and handled it ourselves.
 
 ### Annotations
 
@@ -393,7 +396,7 @@ var cmd = &cobra.Command{
 }
 ```
 
-This annotation is then handled on our root command as follows, determining whether to display a default admin secret key, when it hasn't been specified by the user elsewhere on the config (this will be handled internally by the `config` package):
+This annotation is then handled on our root command, determining whether to display a default admin secret key, when it hasn't been specified by the user elsewhere on the config (this will be handled internally by the `config` package):
 
 ```go
 if cmd.Annotations["show-default-secret"] == "yes" {
@@ -403,7 +406,7 @@ if cmd.Annotations["show-default-secret"] == "yes" {
 
 ### Flags and Subcommands
 
-Once the `cmd` is instanced in the `NewRootCmd()` constructor, then we can add flags or persistent flags (i.e., common to all subcommands), as well the subcommands—each subcommand has a similar constructor:
+Once the `cmd` is instanced in the `NewRootCmd()` constructor, then we can add flags or persistent flags (i.e., common to all subcommands), as well as the subcommands, each having a similar constructor:
 
 ```go
 cmd.SilenceErrors = true
@@ -455,7 +458,7 @@ Flags:
 Use "labstore [command] --help" for more information about a command.
 ```
 
-Here's a semantically organized listing of the supported commands as well—it would be nice to be able to group like this in Cobra, without having to create subcommands, for improved readability, like `just` does:
+Here's a semantically organized listing of the supported commands as well—something that would be nice do in Cobra as well, without having to create subcommands, for improved readability, like `just` does with groups:
 
 - **Server**
 	- `server` – used to start the services for the LabStore server (admin, S3, IAM, and web UI).
@@ -469,13 +472,13 @@ Here's a semantically organized listing of the supported commands as well—it w
 	- `restart`
 	- `status`
 - **Helpers**
-	- `tui palette` – as of how, it displays the color scheme for our palette and, in the future, its parent command will be the home for our TUI as well.
+	- `tui palette` – as of now, it displays the color scheme for our palette and, in the future, its parent command will be the home for our TUI as well.
 	- `completion` – automatic shell completion scripts provided by Cobra (supports bash, zsh, fish, and PowerShell).
 	- `help` – go-style help and usage messages.
 
 ### Shell Autocompletion
 
-In the future, after you `go install` LabStore, you'll also be able to setup autocompletion for your shell. For example, for fish, you just add this to your `~/.config/fish/config.fish`:
+As shown in the help, in the future, after you `go install` LabStore, you'll also be able to setup autocompletion for your shell. For example, for fish, you just add this to your `~/.config/fish/config.fish`:
 
 ```fish
 labstore completion fish | source -
@@ -495,7 +498,7 @@ type ServerDescriptor struct {
 }
 ```
 
-The `Name` will be used to display a message letting the user know where to connect for each service:
+The `Name` (e.g., S3-Compatible API, or IAM) will be used to display a message letting the user know where to connect for each service:
 
 ```
 🌐 S3-Compatible API listening on http://0.0.0.0:6789
@@ -539,7 +542,7 @@ for err := range errCh {
 slog.Info("all servers shut down cleanly")
 ```
 
-We monitor the `errCh` error channel, shared among all services. Each service is started in a goroutine using `go runServer(...)` and setting its healthy status to `true`—if an error occurs or it terminates, it will be set to `false`. Errors are sent to `errCh`, which also serves to block until completion:
+We monitor the error channel `errCh`, shared among all services. Each service is started in a goroutine using `go runServer(...)` and setting its healthy status to `true`—if an error occurs or it terminates, it will be set to `false`. Errors are sent to `errCh`, which also blocks the flow until completion:
 
 ```go
 for err := range errCh {
@@ -549,16 +552,7 @@ for err := range errCh {
 }
 ```
 
-Then, `shutdownServers` will block until the context is done, which is instanced in `router.Start()` as follows to listen for `SIGINT` or `SIGTERM`:
-
-```go
-ctx, stop := signal.NotifyContext(
-	context.Background(),
-	os.Interrupt,
-	syscall.SIGTERM,
-)
-defer stop()
-```
+The `shutdownServers` goroutine will immediately block until the context is done:
 
 ```go
 func shutdownServers(
@@ -582,7 +576,20 @@ func shutdownServers(
 }
 ```
 
-Once each server is shutdown, `runServer` will return and run `wg.Done()`:
+And the context is instanced in `router.Start()`, as follows, to listen for `SIGINT` or `SIGTERM`:
+
+```go
+ctx, stop := signal.NotifyContext(
+	context.Background(),
+	os.Interrupt,
+	syscall.SIGTERM,
+)
+defer stop()
+```
+
+Again, notice that `runServer`, `shutdownServers`, and `waitAndClose` are all started concurrently, but `shutdownServers` will immediately block due to `<- ctx.Done()`, which only resumes on interruption (`SIGINT` or `SIGTERM`). This is how simple and powerful channels are in Go!
+
+Once each server is shutdown, `runServer` will return and call `wg.Done()`:
 
 ```go
 func runServer(
@@ -615,24 +622,20 @@ func waitAndClose(errCh chan error, wg *sync.WaitGroup) {
 }
 ```
 
-Server errors are printed as they arrive, but the whole program is blocked until the `errCh` is closed, at which time it prints a log message, like this:
+Server errors are printed as they arrive, but the whole program is blocked until the `errCh` is closed, at which time it prints a log message:
 
 ```
 Jan 23 17:09:46.263 INF all servers shut down cleanly
 ```
 
-Notice that all `runServer`, `shutdownServers`, and `waitAndClose` are all started concurrently, but `shutdownServers` will immediately block due to `<- ctx.Done()`, which only resumes on interruption (`SIGINT` or `SIGTERM`).
-
-This is how simple and powerful channels are in Go!
-
 ## Managing Client-Side Credentials
 
-Since we're implementing an S3 client, we'll need a way to manage client-side credentials. This is usually done using some kind of config file. For the `aws` CLI tool, they use the concept of profile. We adopted a lightweight approach of the same idea.
+Since we're implementing an S3 client, we'll need a way to manage client-side credentials. This is usually done using some kind of config file. As we know, the `aws` CLI tool uses the concept of profile. We adopted a lightweight approach of this same idea.
 
 We questioned whether we should:
 
 1. Extend our config file format to include client configs (i.e., a top-level `client` entry), with overrides via CLI args and env vars.
-2. Same as previous, but without overrides.
+2. Same as previous, with a config file, but without overrides.
 3. Create a simpler YAML file for credentials.
 
 We ended up going with option 3, creating a `~/.config/labstore/credentials.yml`, automatically initialized when not found, and based on profiles. Something like this, but empty by default:
@@ -645,17 +648,17 @@ profiles:
     secret_key: adminadmin
 ```
 
-The user can then call authenticated commands without specifying a profile, in which case the profile set in `default_profile` will be used, or by specifying a `--profile` to use instead. Since credentials are prone to fail due to server or client side config issues, we decided that having a single source of truth client-side would reduce any potential debugging there.
+After editing this file, the user can then call authenticated commands without specifying a profile, in which case the profile set in `default_profile` will be used, unless overridden by `--profile`. Since credentials are prone to fail due to server or client side config issues, we decided that having a single source of truth would reduce any potential debugging there.
 
 ## First Look at TUI Design
 
-Our next release will focus on the TUI, but the CLI we already used a few TUI tricks based on the [lipgloss](https://github.com/charmbracelet/lipgloss) and [bubbletea](https://github.com/charmbracelet/bubbletea), from the [charm stack](https://charm.land/libs/).
+Our next release will focus on the TUI, but, for the CLI, we already used a few TUI tricks based on [lipgloss](https://github.com/charmbracelet/lipgloss) and [bubbletea](https://github.com/charmbracelet/bubbletea), from the [charm stack](https://charm.land/libs/).
 
-We used `lipgloss` to create CLI styles—color scheme, width, alignment, margin, padding, bold, etc.— and we used `bubbletea` for its progress bar component, that we needed to track uploads (`PutObject`) and downloads (`GetObject`).
+We used `lipgloss` to create CLI styles—color scheme, width, alignment, margin, padding,setting bold, etc.— and we used `bubbletea` for its progress bar component, that we needed to track uploads (`PutObject`) and downloads (`GetObject`).
 
 ### Color Palette
 
-Our color palette was defined using a custom type of `lipgloss.Color`:
+Our color palette was defined using a custom type containing multiple `lipgloss.Color` entries:
 
 ```go
 type Palette struct {
@@ -680,11 +683,11 @@ type Palette struct {
 
 The actual final color will depend on the terminal you're using, and whether it supports 16-colors, 256-colors, or true color, but `lipgloss` will handle the fallback for you transparently—it might not look good, if you don't test it thoroughly, but it will work.
 
-We then define two variables of type `Palette`, `DefaultPalette` and `ActivePalette`. At this time, both variables are the same, but, in the future, we can easily extend this to support external color scheme loading (e.g., load an external file format to override `DefaultPalette` entries).
+We then define two variables of type `Palette`, named `DefaultPalette` and `ActivePalette`. At this time, both variables are the same, but, in the future, we can easily extend this to support external color scheme loading (e.g., load an external file format to override `DefaultPalette` entries).
 
 ### Styling
 
-A common styling strategy with `lipgloss` is to instance `lipgloss.NewStyle()` and, using method chaining, set all the required display properties. This will look something like this:
+A common styling strategy with `lipgloss` is to instance `lipgloss.NewStyle()` and, using method chaining to set all the required display properties. It looks something like this:
 
 ```go
 metaLabelStyle := lipgloss.NewStyle().
@@ -702,7 +705,7 @@ If you're defining the final style, you can simply return `Render`, like we do, 
 
 ### Generics and Type Constraints in Go
 
-In Go, we often do not need generics (or at least I haven't), so it's worth mentioned a use case where generics were helpful. Since we often had to display metadata (i.e., key/value style information), we ended up creating a custom `Metadata` type, with its down `Render` method:
+In Go, we often do not need generics (or at least I haven't), so it's worth mentioning a use case where generics were helpful. Since we often had to display metadata (i.e., key-value style information), we ended up creating a custom `Metadata` type, with its own `Render` method:
 
 ```go
 type Metadata map[string]Meta
@@ -713,7 +716,7 @@ type Meta struct {
 }
 ```
 
-We wanted to be able to customize the display of generic strings and numbers,  as well as dates (`time.Time`) and sizes (`int64`). In particular for numbers, we wanted to accept any of the supported types in Go, which also meant distinguishing from sizes.
+We wanted to be able to customize the display of generic strings and numbers, as well as dates (`time.Time`) and sizes (`int64`). In particular for numbers, we wanted to accept any of the supported types in Go, which also meant distinguishing from sizes.
 
 We approached this by using generics and the following type constraint:
 
@@ -725,7 +728,7 @@ type Number interface {
 }
 ```
 
-Such an interface can only be used with generics to limit the acceptable types. The tilde means that any type as long as its underlying type matches (e.g., it would accept `type MyInt int64` based on `~int64`).
+Such an interface can only be used with generics to limit the acceptable types. The tilde means that any type with the same underlying type will match (e.g., based on `~int64`, it would accept `type MyInt int64`).
 
 Then we defined a constructor per type. For example, we defined `NewNumber` as follows:
 
@@ -776,7 +779,7 @@ This will render to something like this:
 
 ### Designing a Progress Bar Component
 
-We also implemented a progress bar in order to track uploads (`PutObject`) and downloads (`GetObject`). This was based on the [progress-animated](https://github.com/charmbracelet/bubbletea/tree/f9233d51192293dadda7184a4de347738606c328/examples/progress-animated) example straight from the `bubbletea` repo, with an optional console output component, to divert the logger to, while `bubbletea` takes over the CLI.
+We also implemented a progress bar, in order to track uploads (`PutObject`) and downloads (`GetObject`). This was based on the [progress-animated](https://github.com/charmbracelet/bubbletea/tree/f9233d51192293dadda7184a4de347738606c328/examples/progress-animated) example straight from the `bubbletea` repo, with an optional console output component, to divert the logger to, while `bubbletea` takes over the CLI.
 
 ![LabStore Progress Bar](./labstore-progress-bar.png)
 
@@ -804,7 +807,7 @@ type ProgressBarModel struct {
 	console []string
 ```
 
-In Go, as a rule of thumb, always pass the context. Everything, from Cobra to the standard HTTP library, uses a context. Simply passing the context will make it easier to receive interruption or cancelation signals. This is our `Ctx`.
+In Go, as a rule of thumb, always pass the context. Everything, from Cobra to the standard HTTP library, uses a context. Simply passing the context will make it easier to receive interruption or cancellation signals. This is our `Ctx`.
 
 We define a `Bar` that uses the `bubbles` `progress.Model` component.
 
@@ -812,15 +815,15 @@ We define `MaxConsoleSize` to determine the maximum number of lines to display a
 
 Then we pass `Debug`, based on the `--debug` flag from the CLI.
 
-On the next block of fields, we define channels—`Progress` will serve to update the current value in the progress bar, while `Message` will write a message to the console component; `done` just signals the progress bar terminated.
+On the next segment, we define channels—`Progress` will serve to update the current value in the progress bar, while `Message` will write a message to the console component; `done` just signals that the progress bar terminated.
 
-The remaining variables are helpers—`cancel` ensures the context is cancellable, `program` runs the TUI component, `width` and `height` track those values based on the current terminal dimensions, and `console` keeps the last `MaxConsoleSize` messages being displayed.
+The remaining variables are helpers—`cancel` ensures the context is cancellable, `program` runs the TUI component, `width` and `height` track current terminal dimensions, and `console` keeps the last `MaxConsoleSize` messages being displayed.
 
 The two most relevant methods in our progress bar are `Update()` and `Run()`—this last one replaces the usual TUI starter on `main()`. The `Init()` method only calls `Bar.Init()`, while the `View()` method is just regular `lipgloss` styling, like we've seen in the previous sections.
 
 #### Processing Update Events
 
-The `Update()` methods looks like this:
+The `Update()` method looks like this:
 
 ```go
 func (m *ProgressBarModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -846,9 +849,9 @@ type progressMsg struct {
 	current int
 	total   int
 }
+```
 
-// ...
-
+```go
 case progressMsg:
 	pct := float64(msg.current) / float64(msg.total)
 
@@ -867,9 +870,9 @@ Secondly, we handle our console messages:
 
 ```go
 type consoleMsg string
+```
 
-// ...
-
+```go
 case consoleMsg:
 	m.console = append(m.console, string(msg))
 	if len(m.console) > m.MaxConsoleSize {
@@ -901,11 +904,11 @@ case tea.WindowSizeMsg:
 	return m, nil
 ```
 
-Here, `tea.KeyMsg` handles key presses—we capture `Ctrl+C` and exit. Then, `progress.FrameMsg` will handle the animation, triggering at a given frame rate, as opposed to instantly updating, and `tea.WindowSizeMsg` signals terminal size changes, so we can handle it properly.
+Here, `tea.KeyMsg` handles key presses—we capture `ctrl+c` and exit. Then, `progress.FrameMsg` will handle the animation, triggering at a given frame rate, as opposed to instantly updating, and `tea.WindowSizeMsg` signals terminal size changes, so we can handle it properly.
 
 #### Running and Consuming Channels
 
-Running our program means starting the `tea.Program` by calling `program.Run()`,   but also handling channel consumption and program message sending, as well as context cancelling.
+Running our program means starting the `tea.Program` by calling `program.Run()`, but also handling channel consumption and program message sending, as well as context cancelling.
 
 The overall structure of `Run()` looks like this:
 
@@ -941,7 +944,7 @@ func (m *ProgressBarModel) Run() {
 }
 ```
 
-As you can see, we defer the closing of the `done` channel, so that it is called when the function returns and unblocks any termination routine (like we did for the multiple HTTP services, described in a previous section). We also define a wait group with two tasks, one for each channel consumer (defined in the `go func()` calls).
+As you can see, we defer the closing of the `done` channel, so that it is called when the function returns and unblocks any termination routine (like we did for the multiple HTTP services, described in a [previous section](#managing-multiple-http-services)). We also define a wait group with two tasks, one for each channel consumer (defined in the `go func()` calls).
 
 Let's take note of the `logger.Swap` logic:
 
@@ -950,11 +953,11 @@ output := &consoleWriter{ctx: m.Ctx, ch: m.Message}
 revert := logger.Swap(output, logger.WithDebugFlag(m.Debug))
 ```
 
-Our `logger.Swap` method is simple. It will create a new logger, with the given output, and set it as the default, while saving the previous logger, that can be restored by calling `revert()`. What we're doing here is diverting the logger into a `consoleWriter`, which takes a channel—the `Message` channel is used here—and writes messages to the channel instead of `stdout` or `stderr`. This is how we produce the console messages you've seen us handle in the `Update()` method above.
+Our `logger.Swap` method is simple. It will create a new logger, with the given output, and set it as the default, while saving the previous logger, that can be restored by calling `revert()`. What we're doing here is diverting the logger into a `consoleWriter`, which takes a channel—the `Message` channel is used—and writes messages to that channel instead of `stdout` or `stderr`. This is how we produce the console messages you've seen us handle in the `Update()` method above.
 
-We then start a consumer in a goroutine for the `Progress` and `Message` channels, and we run the program. Once the program exists, we cancel the context, we wait for each consumer to finish, and we revert the logger.
+We then start a consumer in a goroutine for the `Progress` and `Message` channels, and we run the program. Once the program exits, we cancel the context, we wait for each consumer to finish, and we revert the logger.
 
-Channel consumers look similar, but for the `Progress` channel, we ensure we consume all remaining messages before releasing:
+Channel consumers look similar, but, for the `Progress` channel, we ensure we consume all remaining messages before releasing:
 
 ```go
 go func() {
@@ -991,7 +994,7 @@ go func() {
 }()
 ```
 
-As you can see, we have an infinite `for` loop, where we call `select`. This is a reserved keyword used to randomly poll channels and return the first that isn't blocked—`default` will be triggered when all channels are blocked.
+As you can see, we have an infinite `for` loop, where we call `select`. This is a reserved keyword used to randomly poll channels and handle the first that isn't blocked—`default` will be triggered when all channels are blocked.
 
 We separate two cases:
 
@@ -1016,7 +1019,7 @@ That said, in Go, we are able to embed files directly into our binary, which is 
 
 Our web UI is planned as a SvelteKit app, to be deployed as a static site. Our original approach to deploying this to production was to produce a `Dockerfile.web` that built the static site and deployed it using Nginx. But why do this when we can just embed the static site directly into our `server` library and serve it with `http.FileServer`? How hard can it be, right?
 
-Well, it turns out that it's not hard at all:
+Well, as it turns out, it's not hard at all:
 
 ```go
 //go:embed assets/**
@@ -1045,16 +1048,16 @@ func NewWebServerDescriptor(host string, port uint16) *ServerDescriptor {
 }
 ```
 
-The previous code is for `server/pkg/router/web.go`. First, we need to make sure that the `web/build` directory is synced to `server/pkg/router/assets/`, which we have done using our `Makefile`, as described in a previous section.
+The previous code is from `server/pkg/router/web.go`. First, we need to make sure that the `web/build` directory is synced to `server/pkg/router/assets/`, which we have done using our `Makefile`, as described in a [previous section](#makefile), although this will have to change in the future, if we want to use `go install`.
 
-Then, we simply define a variable with a special `go:embed` comment pointing to the `assets` directory. This is the magic sauce:
+Then, we simply define a variable with a special `go:embed` comment pointing to the `assets` directory. This comment is the magic sauce:
 
 ```go
 //go:embed assets/**
 var frontendFiles embed.FS
 ```
 
-Then, we can access our files using `fs.Sub`, which returns an `fs.FS` instance, and serve them using `http.FS`, which returns an `http.FileSystem` instance. We pass this to an `http.FileServer`, which is an HTTP handler that we can serve as usual.
+Once set, we can access our files using `fs.Sub`, which returns an `fs.FS` instance, and serve them using `http.FS`, which returns an `http.FileSystem` instance. We pass this to an `http.FileServer`, which provides an HTTP handler that we can serve as usual.
 
 That's it! Pretty sweet, right?
 
@@ -1065,4 +1068,4 @@ We end up with a single 21 MiB binary that has it all—one binary to rule them 
 21M     bin/labstore
 ```
 
-This is the S3 and IAM server, this is the web UI server (no Nginx required), and this is the S3 and IAM client as well. And, next time, this will also be the S3 and IAM TUI! 🚀
+This binary provides the S3 and IAM server, the web UI server (no Nginx required), and the clients for S3 and IAM. And, next time, it will also provide the TUI for S3 and IAM! 🚀
