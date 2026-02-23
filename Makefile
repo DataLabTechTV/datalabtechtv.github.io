@@ -4,13 +4,13 @@ build:
 	hugo --minify
 
 dev:
-	hugo server -DF -b http://localhost:1313
+	hugo server -DF -p 1315
 
 future:
-	hugo server -F -b http://localhost:1313
+	hugo server -F -p 1315
 
 preview:
-	hugo server -b http://localhost:1313
+	hugo server -p 1315
 
 setup:
 	git submodule update --init --recursive
