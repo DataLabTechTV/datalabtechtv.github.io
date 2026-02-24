@@ -1,7 +1,7 @@
 ---
 title: "LabStore - Part 6 - Building an Object Store in Go: S3-Compatible TUI"
 description: Learn the basics of TUI building with lipgloss and bubbletea, from the charm stack.
-date: 2026-02-24T13:00:00+0100
+date: 2026-02-24T13:15:00+0100
 categories: [Software Engineering]
 tags: [s3, go, object-store, aws, cli, tui, client, video]
 ---
