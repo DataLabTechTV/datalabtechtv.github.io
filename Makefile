@@ -50,7 +50,7 @@ deploy: build
 	cd public && \
 	rm -rf .git && \
 	git init -b main && \
-	git config core.sshCommand "ssh -i ~/.ssh/datalabtech" && \
+	git config core.sshCommand "ssh -i ~/.ssh/github-dlt" && \
 	git config user.name "Data Lab Tech" && \
 	git config user.email "204358040+DataLabTechTV@users.noreply.github.com" && \
 	git add . && \
