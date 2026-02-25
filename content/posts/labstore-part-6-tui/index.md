@@ -6,8 +6,6 @@ categories: [Software Engineering]
 tags: [s3, go, object-store, aws, cli, tui, client, video]
 ---
 
-## Summary
-
 Learn the basics of TUI building with [lipgloss](https://github.com/charmbracelet/lipgloss) and [bubbletea](https://github.com/charmbracelet/bubbletea), from the [Charm Stack](https://charm.land/libs/). We'll cover the `tea.Model` interface and its `Init()`, `Update()`, and `View()` methods. We'll look into the event loop, and the best way to setup messages and handle downstream/upstream updates. We'll show you how to use Go channels in a way that lets you track progress without affecting the performance of the underlying task. And we'll cover component design with `lipgloss`, using the [bubbletea-overlay](github.com/rmhubbert/bubbletea-overlay) library, by `rmhubbert`, for compositing, a feature that is currently under development in the beta, coming in `v2.0.0` as layers. We'll close by introducing the v0.1.0 release for LabStore, sharing a few notes on how to install and use it, either through a container, go install, or the precompiled binaries.
 
 Follow this series with IllumiKnow Labs, and let's see where this journey takes us. Hopefully you'll learn a lot along the way!
