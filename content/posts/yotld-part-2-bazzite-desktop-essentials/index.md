@@ -1,12 +1,14 @@
 ---
 title: "Year of the Linux Desktop #2: Bazzite Desktop Essentials"
-description: Wanna know how it really feels to switch to Linux? Is it finally the year of the Linux desktop? What changes with immutable distros? What about apps, tooling, and gaming?
+description: Wanna know how it really feels to switch to Linux? In this blog post, I talk about KDE Plasma, essential applications to manage Flatpak, and the basics of gaming in Linux.
 date: 2026-03-17T12:00:00+0100
 categories: [Philosophy of Technology]
 tags: [linux, bazzite, desktop, immutable, flatpak, gaming, video]
 ---
 
 ## Summary
+
+Wanna know how it really feels to switch to Linux? Is it finally the year of the Linux desktop? What changes with immutable distros? What about apps, tooling, and gaming? I just switched from Windows 11 to Bazzite as my main desktop. In this blog post, I talk about KDE Plasma, essential applications to manage Flatpak, and the basics of gaming in Linux.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe

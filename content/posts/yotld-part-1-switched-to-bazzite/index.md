@@ -1,6 +1,6 @@
 ---
 title: "Year of the Linux Desktop #1: I Switched to Bazzite!"
-description: Wanna know how it really feels to switch to Linux? Is it finally the year of the Linux desktop? What changes with immutable distros? What about apps, tooling, and gaming?
+description: Wanna know how it really feels to switch to Linux? In this blog post, I share my installation process, first impressions, some issues I encountered, and how to deal with them.
 date: 2026-03-10T12:00:00+0100
 categories: [Philosophy of Technology]
 tags: [linux, bazzite, desktop, immutable, video]
@@ -8,7 +8,7 @@ tags: [linux, bazzite, desktop, immutable, video]
 
 ## Summary
 
-Wanna know how it really feels to switch to Linux? Is it finally the year of the Linux desktop? What changes with immutable distros? What about apps, tooling, and gaming? I just switched from Windows 11 to Bazzite as my main desktop. In this video, I share my installation process, first impressions, some issues I encountered, and how to deal with them.
+Wanna know how it really feels to switch to Linux? Is it finally the year of the Linux desktop? What changes with immutable distros? What about apps, tooling, and gaming? I just switched from Windows 11 to Bazzite as my main desktop. In this blog post, I share my installation process, first impressions, some issues I encountered, and how to deal with them.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
