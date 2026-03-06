@@ -84,3 +84,10 @@ Unit=var-mnt-nas.mount
 [Install]
 WantedBy=multi-user.target
 ```
+
+Then, enable the automount units using:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now var-mnt.nas.automount
+```
