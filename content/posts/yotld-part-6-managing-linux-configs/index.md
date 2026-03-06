@@ -25,6 +25,10 @@ Learn how to securely manage your Linux configs with chezmoi and a git repo, so 
 
 Chezmoi is a CLI utility to manage dotfiles across multiple machines, running on diverse platforms, while providing encryption features to help you secure sensitive information. Of course I would avoid storing private credentials publicly regardless of the security level, but this is, at the very least, quite helpful for privacy. For example, here I use it to store the MAC address for one of my machines.
 
+Chezmoi also integrates quite well with several password and secret managers, like 1Password, Bitwarden, Proton Pass, the system's keyring, the standard UNIX password manager, `pass`, HashiCorp Vault, or AWS Secrets Manager. These usually require that you install the expected packages to support each manager. For example, you need `bw` for Bitwarden, or a setup AWS profile for AWS Secrets Manager. You know, the usual.
+
+I opted out of using any of these options, as I prefer a more minimal approach for my setup. I've simply kept my age private key securely stored on my personal password manager, so I can restore my configs on other systems easily.
+
 ## Age Encryption
 
 If you're setting up chezmoi for the first time, you should generate an age private key:
@@ -38,10 +42,6 @@ Chezmoi provides out-of-the-box support for asymmetric encryption via the previo
 [Age](https://github.com/FiloSottile/age) is a post-quantum alternative to PGP, but please make sure that you generate your private key using `age-keygen` directly, with the `-pq` option, if you need post-quantum encryption, as it won't be used by default.
 
 Here, I just used the age features provided directly by chezmoi, which are more than enough for my use case, since I'm not even storing any credentials really. If this changes, I can just generate a post-quantum private, and build a small script to decrypt and reencrypt existing secrets with the new key, in order to further secure my secrets.
-
-Chezmoi also integrates quite well with several password and secret managers, like 1Password, Bitwarden, Proton Pass, the system's keyring, the standard UNIX password manager, `pass`, HashiCorp Vault, or AWS Secrets Manager. These usually require that you install the expected packages to support each manager. For example, you need `bw` for Bitwarden, or a setup AWS profile for AWS Secrets Manager. You know, the usual.
-
-I opted out of using any of these options, as I prefer a more minimal approach for my setup. I've simply kept my age private key securely stored on my personal password manager, so I can restore my configs on other systems easily.
 
 ## Configuration
 
