@@ -89,5 +89,5 @@ Then, enable the automount units using:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now var-mnt.nas.automount
+sudo systemctl enable --now var-mnt-nas.automount
 ```
