@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Distrobox on Data Lab Tech TV</title>
+    <link>http://localhost:36049/tags/distrobox/</link>
+    <description>Recent content in Distrobox on Data Lab Tech TV</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© 2026 Data Lab Tech</copyright>
+    <lastBuildDate>Tue, 07 Apr 2026 12:00:00 +0100</lastBuildDate><atom:link href="http://localhost:36049/tags/distrobox/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Year of the Linux Desktop #5: Development in Immutable Bazzite</title>
+      <link>http://localhost:36049/posts/yotld-part-5-bazzite-development/</link>
+      <pubDate>Tue, 07 Apr 2026 12:00:00 +0100</pubDate>
+      
+      <guid>http://localhost:36049/posts/yotld-part-5-bazzite-development/</guid>
+      <description>Learn how to install your IDE with a Flatpak, and use distrobox for your dev tooling and environment.</description>
+      <media:content xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:36049/posts/yotld-part-5-bazzite-development/feature.jpg" />
+    </item>
+    
+  </channel>
+</rss>
