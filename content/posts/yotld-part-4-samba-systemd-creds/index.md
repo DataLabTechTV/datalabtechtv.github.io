@@ -91,3 +91,41 @@ Then, enable the automount units using:
 sudo systemctl daemon-reload
 sudo systemctl enable --now var-mnt-nas.automount
 ```
+
+## Mockup Samba Server
+
+Here's a tip. If you need to test this quickly, you can setup your own server with Docker or Podman.
+
+First, create a temporary directory to hold your share's data:
+
+```bash
+mkdir -p /tmp/samba/data
+cd /tmp/samba
+```
+
+Then, start a Samba container—no need to expose the ports, as we'll use the container IP directly for testing only:
+
+```bash
+sudo podman run --rm \
+	--name samba \
+	-p 139:139 \
+	-p 445:445 \
+	-v ./data:/mount \
+	dperson/samba \
+	-u "demo;demo" \
+	-s "share;/mount;yes;no;no;demo"
+```
+
+Notice that we use `demo` for the username and password, that our share is called `share` and points to `/mount` inside the container (mounted locally under `./data`), and that we give permissions for `demo` to access `share`. We also use `--rm`, so this container will be removed when it's stopped.
+
+You can check if the connection works by fetching the IP for the container with:
+
+```bash
+sudo podman inspect -f '{{ .NetworkSettings.IPAddress }}' samba
+```
+
+And then connecting to the Samba share using:
+
+```bash
+smbclient '//<ip>/share' -U 'demo'
+```
