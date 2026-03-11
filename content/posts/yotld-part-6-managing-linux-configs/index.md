@@ -12,7 +12,7 @@ Learn how to securely manage your Linux configs with chezmoi and a git repo, so 
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
-        src="https://www.youtube.com/embed/TBD"
+        src="https://www.youtube.com/embed/_m7sJrsZfUs"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
