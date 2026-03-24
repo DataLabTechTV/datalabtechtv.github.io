@@ -1,7 +1,8 @@
 ---
 title: "The UNIX Philosophy Applied to Data Wrangling"
 description: TODO
-date: 2026-04-21T12:00:00+0100
+date: 2026-05-121T12:00:00+0100
+draft: true
 categories: [Data Science]
 tags: [unix-philosophy, data-wrangling, data, pipelines, cli, video]
 ---
