@@ -1,6 +1,6 @@
 ---
-title: "Year of the Linux Desktop #8: Installing Niri and Noctalia on Bazzite"
-description:
+title: "Year of the Linux Desktop #8: Niri & Noctalia on Bazzite"
+description: Today we will learn how to install and configure Niri, Noctalia, and a few other utilities on Bazzite!
 date: 2026-04-28T12:00:00+0100
 categories: [DevOps]
 tags: [linux, bazzite, desktop, immutable, bootc, niri, noctalia, video]
@@ -8,11 +8,11 @@ tags: [linux, bazzite, desktop, immutable, bootc, niri, noctalia, video]
 
 ## Summary
 
-
+KDE is great, but what if we want to do some ricing and improve our workflow by installing a separate compositor and shell? Today we will learn how to install and configure Niri, Noctalia, and a few other utilities on Bazzite!
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
-        src="https://www.youtube.com/embed/TBD"
+        src="https://www.youtube.com/embed/laqniVDQRwg"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
