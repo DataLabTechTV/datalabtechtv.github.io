@@ -1,6 +1,6 @@
 ---
 title: "Year of the Linux Desktop #7: Building a Custom Bazzite Image"
-description:
+description: Let's learn about bootc, and how to setup a custom Bazzite image!\
 date: 2026-04-21T12:00:00+0100
 categories: [DevOps]
 tags: [linux, bazzite, desktop, immutable, bootc, image, oci, video]
@@ -8,11 +8,11 @@ tags: [linux, bazzite, desktop, immutable, bootc, image, oci, video]
 
 ## Summary
 
-
+The cool thing about an immutable distro based on `bootc` is that you can setup your own custom image in a way that is not that different from what you can do with NixOS or Guix, except it relies on containers and breaks all barriers that custom configuration languages had introduced. Now, you just use the system's package manager again. Let's learn how to setup a custom Bazzite image!
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
-        src="https://www.youtube.com/embed/TBD"
+        src="https://www.youtube.com/embed/jZ-mEeKZFlo"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
