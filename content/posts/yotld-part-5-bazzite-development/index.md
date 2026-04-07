@@ -39,7 +39,7 @@ I ended up going the Flatpak and Distrobox route. Since you can attached to a ru
 
 #### What Worked
 
-I installed Visual Studio Code from Flathub, and the installed `podman-host`, configuring `Dev > Containers: Docker Path` to point to `~/.local/bin/podman-host`:
+I installed Visual Studio Code from Flathub, and then installed `podman-host`, configuring `Dev > Containers: Docker Path` to point to `~/.local/bin/podman-host`:
 
 ```bash
 curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/podman-host \
