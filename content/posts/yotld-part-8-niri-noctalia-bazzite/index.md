@@ -1,6 +1,6 @@
 ---
 title: "Year of the Linux Desktop #8: Niri & Noctalia on Bazzite"
-description: Today we will learn how to install and configure Niri, Noctalia, and a few other utilities on Bazzite!
+description: Learn how to install and configure Niri, Noctalia, and a few other utilities on Bazzite!
 date: 2026-04-28T12:00:00+0100
 categories: [DevOps]
 tags: [linux, bazzite, desktop, immutable, bootc, niri, noctalia, video]

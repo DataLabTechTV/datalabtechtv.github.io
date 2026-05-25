@@ -1,6 +1,6 @@
 ---
 title: "Year of the Linux Desktop #7: Building a Custom Bazzite Image"
-description: Let's learn about bootc, and how to setup a custom Bazzite image!\
+description: Let's learn about bootc, and how to setup a custom Bazzite image!
 date: 2026-04-21T12:00:00+0100
 categories: [DevOps]
 tags: [linux, bazzite, desktop, immutable, bootc, image, oci, video]
