@@ -1,7 +1,7 @@
 ---
 title: "Year of the Linux Desktop #9: Bootc Image Lifecycle Management for Immutable Linux"
 description: Learn about the pains of managing a custom bootc image, and how to handle caching, configuration management, and testing changes before rebuilding.
-date: 2026-05-26T12:00:00+0100
+date: 2026-05-26T13:00:00+0100
 categories: [DevOps]
 tags: [linux, bazzite, immutable, bootc, image, lifecycle, caching, configs, dotfiles, video]
 ---
