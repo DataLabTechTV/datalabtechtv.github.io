@@ -1,6 +1,6 @@
 ---
 title: "The Sandbox Stack - Paranoid Level Sandboxing #1"
-description: Learn about sandboxing untrusted software, using containers, landlock, seccomp, nftables, unbound, and grype.
+description: Learn how to sandbox untrusted software, using containers, landlock, seccomp, nftables, unbound, and grype.
 date: 2026-07-21T12:00:00+0100
 categories: [DevOps]
 tags: [devsecops, sandboxing, container-security, podman, oci, landlock, nono, seccomp, firewall, nftables, dns, unbound, cve, grype, video]
@@ -8,7 +8,7 @@ tags: [devsecops, sandboxing, container-security, podman, oci, landlock, nono, s
 
 ## Summary
 
-Learn about sandboxing untrusted software, from AI agents, to development stacks with the potencial to be vulnerable to supply chain attacks. We cover container hardening, Landlock rulesets, SECCOMP profiles, firewall rules, DNS allowlists, and CVE scanning and vulnerability management.
+Learn how to sandbox untrusted software, from AI agents, to development stacks with the potencial to be vulnerable to supply chain attacks. We cover container hardening, Landlock rulesets, Seccomp BPF profiles, firewall rules, DNS allowlists, and CVE scanning and vulnerability management.
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
