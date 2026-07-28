@@ -3,7 +3,7 @@ title: "Container Runtime Hardening with Podman - Paranoid Level Sandboxing #2"
 description: Learn how to sandbox untrusted software through container runtime hardening.
 date: 2026-07-28T12:00:00+0100
 categories: [DevOps]
-tags: [devsecops, sandboxing, containers, hardening, container-security, podman, oci, video]
+tags: [devsecops, sandboxing, containers, hardening, container-security, podman, video]
 ---
 
 ## Summary

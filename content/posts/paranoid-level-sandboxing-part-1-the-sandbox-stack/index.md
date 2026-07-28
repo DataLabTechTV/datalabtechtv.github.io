@@ -3,7 +3,7 @@ title: "The Sandbox Stack - Paranoid Level Sandboxing #1"
 description: Learn how to sandbox untrusted software, using containers, landlock, seccomp, nftables, unbound, and grype.
 date: 2026-07-21T12:00:00+0100
 categories: [DevOps]
-tags: [devsecops, sandboxing, container-security, podman, oci, landlock, nono, seccomp, firewall, nftables, dns, unbound, cve, grype, video]
+tags: [devsecops, sandboxing, container-security, podman, landlock, nono, seccomp, firewall, nftables, dns, unbound, cve, grype, video]
 ---
 
 ## Summary
