@@ -3,7 +3,7 @@ title: "DNS Allowlisting with Unbound - Paranoid Level Sandboxing #6"
 description: Learn how to sandbox untrusted software, with allowslists in the Unbound DNS server.
 date: 2026-08-25T12:00:00+0100
 categories: [DevOps]
-tags: [devsecops, sandboxing, dns, unbound, container-networking, container-security, podman, networking, video]
+tags: [devsecops, sandboxing, containers, container-security, container-networking, networking, podman, dns, unbound, video]
 ---
 
 ## Summary
@@ -12,7 +12,7 @@ Learn how to sandbox untrusted software, from AI agents, to development stacks w
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
-        src="https://www.youtube.com/embed/TBD"
+        src="https://www.youtube.com/embed/RgOveE07A9Q"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
