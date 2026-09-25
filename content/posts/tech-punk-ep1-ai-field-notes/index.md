@@ -14,7 +14,7 @@ Tech Punk is a podcast where I freely talk about the topics that interests me. I
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
     <iframe
-        src="https://www.youtube.com/embed/YAxdCqvd7fk"
+        src="https://www.youtube.com/embed/rirsP6ctMnQ"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerpolicy="strict-origin-when-cross-origin"
