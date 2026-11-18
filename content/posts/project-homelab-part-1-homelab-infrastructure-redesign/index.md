@@ -1,9 +1,9 @@
 ---
 title: "Homelab Infrastructure Redesign | Project Homelab #1"
-description: Here's how I designed my homelab architecture, deploying it through infrastructure-as-code.
+description: Here's how I designed my homelab architecture, deploying it through IaC.
 date: 2026-11-17T18:30:00+0000
 categories: [DevOps]
-tags: [ai-infrastructure, agentic-ai, iac, ansible, opentofu, justfile, video]
+tags: [homelab, ai-infrastructure, local-ai, agentic-ai, iac, ansible, opentofu, justfile, video]
 ---
 
 ## Summary
