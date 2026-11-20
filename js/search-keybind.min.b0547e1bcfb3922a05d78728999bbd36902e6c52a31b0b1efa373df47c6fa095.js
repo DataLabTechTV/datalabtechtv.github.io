@@ -1,0 +1,1 @@
+document.addEventListener("keydown",function(e){const t=navigator.platform.toUpperCase().indexOf("MAC")>=0,n=!t&&e.ctrlKey&&e.key=="k",s=t&&e.metaKey&&e.key=="k";(n||s)&&(e.preventDefault(),displaySearch())})
