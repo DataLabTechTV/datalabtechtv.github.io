@@ -1,6 +1,6 @@
 ---
 title: "Monitoring uCore HCI with Grafana PCP | Project Homelab #5"
-description: Learn how to build a custom uCore HCI bootc image for your homelab.
+description: Learn how to setup Grafana and Performance Co-Pilot to monitor your VMs.
 date: 2026-11-25T14:00:00+0000
 categories: [DevOps]
 tags: [homelab, monitoring, grafana, grafana-pcp, performance-co-pilot, ucore, video]
